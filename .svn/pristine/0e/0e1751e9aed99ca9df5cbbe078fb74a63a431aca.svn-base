@@ -1,0 +1,56 @@
+package gui;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.util.Observer;
+
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+
+public class OverzichtPanel extends JPanel implements ListSelectionListener{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private AbstractTableModel model;
+	private JTable overzichtTable;
+	private Observer observer;
+	
+	public OverzichtPanel(AbstractTableModel model){
+		super();
+		this.model = model;
+		initGUI();
+	}
+	private void initGUI() {
+		BorderLayout overzichtPanelLayout = new BorderLayout();
+		this.setLayout(overzichtPanelLayout);
+		this.observer = (Observer) model;
+		
+		
+		overzichtTable = new JTable();
+		overzichtTable.setModel(model);
+		overzichtTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		overzichtTable.getSelectionModel().addListSelectionListener(this);
+		overzichtTable.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
+		this.add(overzichtTable);
+		
+		
+	}
+	@Override
+	public void valueChanged(ListSelectionEvent event) {
+		if(event.getValueIsAdjusting())
+		{
+			return;
+		}
+		observer.update(null, overzichtTable.getSelectedRow());
+		
+	}
+	
+
+}

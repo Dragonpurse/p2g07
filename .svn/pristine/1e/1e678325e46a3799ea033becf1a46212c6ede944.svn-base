@@ -1,0 +1,142 @@
+package gui;
+
+import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import net.miginfocom.swing.MigLayout;
+
+import com.jgoodies.looks.windows.WindowsLookAndFeel;
+
+import domein.LeertrajectController;
+import domein.tableModel.SoortTableModel;
+
+public class MainFrame extends JFrame {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	LeertrajectController controller;
+	private JPanel contentPanel;
+	private BrowserPane trajecten, onderdelen, onderdeelTraject;
+	private SearchPanel searchTraject, searchOnderdeel;
+	
+	public MainFrame(LeertrajectController controller ){
+		super();
+		this.controller = controller;
+		initGUI();	
+	}
+	
+	private void initGUI() {
+		try{
+			UIManager.setLookAndFeel(new WindowsLookAndFeel());		
+			contentPanel = new JPanel(new MigLayout("","[]15[grow,fill][grow]","[grow,fill][grow,fill]5[]"));
+			contentPanel.setPreferredSize(new Dimension(1250,800));
+
+			OverzichtPane overzicht = new OverzichtPane(this.controller);
+			overzicht.setFocusable(false);
+			
+			contentPanel.add(overzicht);
+			
+			JTabbedPane leftTab = new JTabbedPane();
+			JPanel leftPanel = new JPanel(new MigLayout("fill","[::350]","[]20[]"));
+			{
+				searchTraject = new SearchPanel();
+				searchTraject.getSearchField().getDocument().addDocumentListener(new DocumentListener() {
+					
+					@Override
+					public void removeUpdate(DocumentEvent e) {
+						trajecten.searchTable(searchTraject.getSearchField().getText(), searchTraject.getCheckboxes());
+					}
+					
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						trajecten.searchTable(searchTraject.getSearchField().getText(), searchTraject.getCheckboxes());
+					}
+					
+					@Override
+					public void changedUpdate(DocumentEvent e) {
+						trajecten.searchTable(searchTraject.getSearchField().getText(), searchTraject.getCheckboxes());
+						
+					}
+				});
+				leftPanel.add(searchTraject,"north");
+			}
+			{
+				trajecten = new BrowserPane(controller.geefTableModel(SoortTableModel.LEERTRAJECT), ListSelectionModel.SINGLE_SELECTION);
+				leftPanel.add(trajecten,"north");
+			}
+			{
+				onderdelen = new BrowserPane(controller.geefTableModel(SoortTableModel.ONDERDEEL), ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				leftPanel.add(onderdelen,"wrap,south");
+			}
+			{
+				searchOnderdeel = new SearchPanel();
+				searchOnderdeel.getSearchField().getDocument().addDocumentListener(new DocumentListener() {
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						onderdelen.searchTable(searchOnderdeel.getSearchField().getText(), searchOnderdeel.getCheckboxes());
+						
+					}
+	
+					@Override
+					public void removeUpdate(DocumentEvent e) {
+						onderdelen.searchTable(searchOnderdeel.getSearchField().getText(), searchOnderdeel.getCheckboxes());
+						
+					}
+	
+					@Override
+					public void changedUpdate(DocumentEvent e) {
+						onderdelen.searchTable(searchOnderdeel.getSearchField().getText(), searchOnderdeel.getCheckboxes());
+						
+					}
+				});
+				searchOnderdeel.addCheckBox("Document");
+				searchOnderdeel.addCheckBox("Casus");
+				searchOnderdeel.addCheckBox("Stellingspel");
+				searchOnderdeel.addCheckBox("Vragenlijst");
+				for(JCheckBox cb : searchOnderdeel.getCheckboxes()){
+					cb.addItemListener(new ItemListener() {
+	
+						@Override
+					    public void itemStateChanged(ItemEvent e) {
+							onderdelen.searchTable(searchOnderdeel.getSearchField().getText(), searchOnderdeel.getCheckboxes());
+					    }
+					});
+				}
+			}
+			leftPanel.add(searchOnderdeel,"south,spanx");
+			leftTab.add("Browser",leftPanel);
+			contentPanel.add(leftTab, "west, spany");
+			
+			JTabbedPane bottomTab = new JTabbedPane();
+			bottomTab.setFocusable(false);
+			JPanel bottomPanel = new JPanel(new MigLayout());
+			onderdeelTraject = new BrowserPane(controller.geefTableModel(SoortTableModel.ONDERDEELTRAJECT), ListSelectionModel.SINGLE_SELECTION);
+			bottomPanel.add(onderdeelTraject,"spanx,grow,east");
+			bottomTab.add("Onderdelen per traject",bottomPanel);
+			contentPanel.add(bottomTab, "south, spanx");
+			
+			getContentPane().add(contentPanel);
+			setSize(contentPanel.getPreferredSize());
+			setDefaultCloseOperation(EXIT_ON_CLOSE);
+			setLocationRelativeTo(null);
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+}

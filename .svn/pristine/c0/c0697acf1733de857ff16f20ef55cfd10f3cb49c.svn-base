@@ -1,0 +1,56 @@
+﻿@using Project2Groep7.Models
+@model IEnumerable<Project2Groep7.Models.TrajectOnderdelen>
+
+<div class="table">
+    <table>
+        <tr align="left">
+        
+            <th>
+                @Html.DisplayNameFor(model => model.DisplayNaam)
+            </th>
+            <th class="SpecialColum">
+                @Html.DisplayNameFor(model => model.DisplayOmschrijving)
+            </th>       
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model) {
+            <tr>      
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayNaam)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayOmschrijving)
+                </td>       
+                <td>          
+
+                    @Html.ActionLink("Bekijk", "ViewDocument", "Onderdeel", new {onderdeelID = item.OnderdeelID},null)
+
+
+@*                    @{/*Logica Voor use case 2 (play, download...) */}   
+                    @if (item.GetType() == typeof (Document))
+                    {
+                        //not sure if i am allowed to put it here but it's easy :)
+                        switch (((Document)item).TypeExtension())
+                        {
+                             
+                                case "view" :@Html.ActionLink("Bekijk", "ViewDocument", "Onderdeel", new {onderdeelID = item.OnderdeelID},null)
+                                break;
+                                case "play" :@Html.ActionLink("Play", "ViewDocument", "Onderdeel", new {onderdeelID = item.OnderdeelID},null)
+                                break;
+                        }  
+                         
+                     @Html.DisplayName(" | ")
+                     @Html.ActionLink("Download", "Download", "Onderdeel", new {onderdeelID = item.OnderdeelID},null)            
+                        
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Speel", "Play", "Onderdeel", new { onderdeelID = item.OnderdeelID },null)
+                    }   *@          
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

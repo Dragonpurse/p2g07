@@ -1,0 +1,24 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblStellingspel
+    {
+        public tblStellingspel()
+        {
+            this.tblStellings = new List<tblStelling>();
+            this.tblTrajectOnderdelens = new List<tblTrajectOnderdelen>();
+        }
+
+        [Key]
+        public int StellingspelID { get; set; }
+        public string Titel { get; set; }
+        public string Omschrijving { get; set; }
+        public string Doelgroep { get; set; }
+        public string Kernwoorden { get; set; }
+        public virtual ICollection<tblStelling> tblStellings { get; set; }
+        public virtual ICollection<tblTrajectOnderdelen> tblTrajectOnderdelens { get; set; }
+    }
+}

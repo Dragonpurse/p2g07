@@ -1,0 +1,16 @@
+import gui.LoginFrame;
+
+import javax.swing.JFrame;
+
+import domein.LeertrajectController;
+
+public class StartUp {
+
+	public static void main(String[] args) {
+
+		JFrame loginFrame = new LoginFrame(new LeertrajectController());
+		//JFrame mainFrame = new MainFrame(new LeertrajectController());
+		//mainFrame.setVisible(true);
+	}
+	
+}

@@ -1,0 +1,4 @@
+jdbc:sqlserver://localhost\SQLEXPRESS;databaseName=p2g7;userName=admin;password=admin
+1
+2
+22

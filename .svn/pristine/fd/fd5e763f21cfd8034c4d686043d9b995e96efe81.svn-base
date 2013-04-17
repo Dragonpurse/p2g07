@@ -1,0 +1,50 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Security;
+using WebMatrix.WebData;
+using Project2Groep7.Models;
+
+namespace Project2Groep7.Models
+{
+    public class MyWebSecurity
+    {
+        public IMedewerkerRepository repos { get; set; }
+
+        public MyWebSecurity(IMedewerkerRepository repos)
+        {
+            this.repos = repos;
+        }
+
+        public bool IsValid(string email, string wachtwoord)
+        {
+            Medewerker medewerker = repos.FindByEmail(email);
+            if (medewerker == null)
+            {
+                return false;
+            }
+            if (medewerker.Wachtwoord == wachtwoord && medewerker.Intern == true)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public int GetUserId(string email)
+        {
+            Medewerker medewerker = repos.FindByEmail(email);
+            return medewerker.MedewerkerID;
+        }
+
+        public bool ChangePassword(string name, string oldPassword, string newPassword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreateAccount(string name, string newPassword)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

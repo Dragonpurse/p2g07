@@ -1,0 +1,10 @@
+namespace p2g7.Models.Domain
+{
+    public partial class AntwoordStelling
+    {
+        public int StellingID { get; set; }
+        public string Antwoord { get; set; }
+        public string Kleur { get; set; }
+        public virtual Stelling Stelling { get; set; }
+    }
+}

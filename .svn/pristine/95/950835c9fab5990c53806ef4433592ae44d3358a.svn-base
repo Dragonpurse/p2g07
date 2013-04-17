@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Project2Groep7.Models;
+using MvcContrib.Pagination;
+
+
+namespace Project2Groep7.Controllers
+{
+    [Authorize]
+    public class LeertrajectController : Controller
+    {
+		private readonly ILeertrajectRepository leertrajectRepository;
+        private readonly IMedewerkerRepository medewerkerRepository;
+        public IEnumerable<Leertraject> leertrajecten { get; set; }
+
+        public LeertrajectController(ILeertrajectRepository leertrajectRepository, IMedewerkerRepository medewerkerRepository)
+        {
+            this.leertrajectRepository = leertrajectRepository;
+            this.medewerkerRepository = medewerkerRepository;
+        }
+
+        //
+        // GET: /tblLeertrajects/
+
+        public ViewResult Index(int? page)
+        {
+            var pagedLeertrajecten = GetLeertrajecten().AsPagination(page ?? 1, 10);
+            return View(pagedLeertrajecten);
+        }
+
+        public ActionResult ViewLeertraject(string leertrajectCode)
+        {
+            Leertraject traject = leertrajectRepository.FindById(leertrajectCode);
+            return View(traject);
+        }
+
+        public IEnumerable<Leertraject> GetLeertrajecten()
+        {
+            Medewerker medewerker = medewerkerRepository.FindByEmail(User.Identity.Name);
+            IEnumerable<Leertraject> leertrajecten = medewerker.tblLeertrajects.OrderBy(l => l.LeertrajectCode);
+            return leertrajecten;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                leertrajectRepository.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+
+    }
+}
+

@@ -1,0 +1,10 @@
+package persistentie;
+
+import domein.*;
+
+public class DocumentMapper {
+
+	public void voegDocumentToe(Document document) {
+		throw new UnsupportedOperationException();
+	}
+}

@@ -1,0 +1,29 @@
+﻿@model Project2Groep7.Models.TrajectOnderdeel
+
+@{
+    ViewBag.Title = "Onderdeel";
+}
+
+<h1>@Model.DisplayNaam</h1>
+<h2>@Model.DisplayOmschrijving</h2>
+
+
+@if (Model.Type.Equals("Document"))
+{
+    @Html.Partial("_PartialViewDocument", Model.document)
+}
+@if (Model.Type.Equals("Doos"))
+{
+    @Html.Partial("_PartialViewDoos", Model.doos)
+}
+@if (Model.Type.Equals("Casus"))
+{
+    @Html.Partial("_PartialViewCasus", Model.casus)
+}
+@if (Model.Type.Equals("Stellingspel"))
+{
+    @Html.Partial("_PartialViewStellingspel", Model.stellingspel)
+}
+
+
+

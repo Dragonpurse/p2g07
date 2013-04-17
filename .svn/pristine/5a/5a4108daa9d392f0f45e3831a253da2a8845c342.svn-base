@@ -1,0 +1,12 @@
+using System;
+using System.Collections.Generic;
+
+namespace p2g7.Models.Domain
+{
+    public partial class VraagDoos
+    {
+        public int DoosID { get; set; }
+        public string Vraag { get; set; }
+        public virtual Doos Doos { get; set; }
+    }
+}

@@ -1,0 +1,36 @@
+package gui;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class TrajectAanmakenFrame extends JFrame {
+	private JPanel trajectAanmakenPanel;
+	
+	public TrajectAanmakenFrame(){
+		super();
+		initGUI();
+
+	}
+
+	private void initGUI() {
+		setPreferredSize(new java.awt.Dimension(400, 450));
+		setMaximumSize(new java.awt.Dimension(400, 500));
+		setResizable(false);
+		trajectAanmakenPanel = new JPanel();
+
+		getContentPane().add(trajectAanmakenPanel, BorderLayout.CENTER);
+		
+		
+	}
+
+}

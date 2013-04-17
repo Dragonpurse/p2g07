@@ -1,0 +1,33 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using p2g7.Models.Domain;
+
+namespace p2g7.Models.Mapping
+{
+    public class VraagDoosMap : EntityTypeConfiguration<VraagDoos>
+    {
+        public VraagDoosMap()
+        {
+            // Primary Key
+            this.HasKey(t => new { t.DoosID, t.Vraag });
+
+            // Properties
+            this.Property(t => t.DoosID)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+
+            this.Property(t => t.Vraag)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            // Table & Column Mappings
+            this.ToTable("tblVraagDoos");
+            this.Property(t => t.DoosID).HasColumnName("DoosID");
+            this.Property(t => t.Vraag).HasColumnName("Vraag");
+
+            // Relationships
+            this.HasRequired(t => t.Doos)
+                .WithMany(t => t.VragenDoos)
+                .HasForeignKey(d => d.DoosID);
+
+        }
+    }
+}

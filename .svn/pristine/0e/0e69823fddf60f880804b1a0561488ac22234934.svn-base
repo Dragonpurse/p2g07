@@ -1,0 +1,11 @@
+package domein;
+
+import java.util.ArrayList;
+
+public class Element {
+
+	private String titel;
+	private String omschrijving;
+	private ArrayList<String> kernwoorden;
+	private String doelgroep;
+}

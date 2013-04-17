@@ -1,0 +1,63 @@
+﻿@using Project2Groep7.Models
+@model IEnumerable<Project2Groep7.Models.TrajectOnderdeel>
+
+<div class="table">
+    <table>
+        <tr>
+        
+            <th>
+                Naam
+            </th>
+            <th>
+                Omschrijving
+            </th>       
+            <th>Bekijken</th>
+            <th>Download</th>
+        </tr>
+
+        @foreach (var item in Model) {
+            <tr>      
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayNaam)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayOmschrijving)
+                </td>       
+                <td>          
+
+                    @Html.ActionLink("Bekijk", "Index", "Onderdeel", new {onderdeelID = item.OnderdeelID, type = item.Type},null)
+
+
+@*                    @{/*Logica Voor use case 2 (play, download...) */}   
+                    @if (item.GetType() == typeof (Document))
+                    {
+                        //not sure if i am allowed to put it here but it's easy :)
+                        switch (((Document)item).TypeExtension())
+                        {
+                             
+                                case "view" :@Html.ActionLink("Bekijk", "ViewDocument", "Onderdeel", new {onderdeelID = item.OnderdeelID},null)
+                                break;
+                                case "play" :@Html.ActionLink("Play", "ViewDocument", "Onderdeel", new {onderdeelID = item.OnderdeelID},null)
+                                break;
+                        }  
+                         
+                     @Html.DisplayName(" | ")
+                     @Html.ActionLink("Download", "Download", "Onderdeel", new {onderdeelID = item.OnderdeelID},null)            
+                        
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Speel", "Play", "Onderdeel", new { onderdeelID = item.OnderdeelID },null)
+                    }   *@          
+                </td>
+                <td>
+                    @if (item.Type == "Document" && !item.document.Locatie.Contains("youtu"))
+                    {
+                         @Html.ActionLink("Download", "Download", "Onderdeel", new {url = item.document.Locatie},null)
+                    }
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

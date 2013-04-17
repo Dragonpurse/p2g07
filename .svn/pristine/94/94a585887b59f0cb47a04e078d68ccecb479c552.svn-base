@@ -1,0 +1,30 @@
+using p2g7.Models.Domain;
+
+namespace p2g7.Models.Mapping
+{
+    public class StellingMap : EntityTypeConfiguration<Stelling>
+    {
+        public StellingMap()
+        {
+            // Primary Key
+            this.HasKey(t => t.StellingID);
+
+            // Properties
+            this.Property(t => t.Stelling)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            // Table & Column Mappings
+            this.ToTable("tblStelling");
+            this.Property(t => t.StellingspelID).HasColumnName("StellingspelID");
+            this.Property(t => t.Stelling).HasColumnName("Stelling");
+            this.Property(t => t.StellingID).HasColumnName("StellingID");
+
+            // Relationships
+            this.HasRequired(t => t.Stellingspel)
+                .WithMany(t => t.Stellingen)
+                .HasForeignKey(d => d.StellingspelID);
+
+        }
+    }
+}

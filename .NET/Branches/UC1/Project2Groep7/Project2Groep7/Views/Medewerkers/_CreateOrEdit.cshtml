@@ -1,0 +1,68 @@
+@model Project2Groep7.Models.Medewerker
+
+@* This partial view defines form fields that will appear when creating and editing entities *@
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Email)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Email)
+    @Html.ValidationMessageFor(model => model.Email)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Wachtwoord)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Wachtwoord)
+    @Html.ValidationMessageFor(model => model.Wachtwoord)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Voornaam)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Voornaam)
+    @Html.ValidationMessageFor(model => model.Voornaam)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Naam)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Naam)
+    @Html.ValidationMessageFor(model => model.Naam)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.TelefoonNr)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.TelefoonNr)
+    @Html.ValidationMessageFor(model => model.TelefoonNr)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Organisatie)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Organisatie)
+    @Html.ValidationMessageFor(model => model.Organisatie)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Intern)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Intern)
+    @Html.ValidationMessageFor(model => model.Intern)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.RememberMe)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.RememberMe)
+    @Html.ValidationMessageFor(model => model.RememberMe)
+</div>
+

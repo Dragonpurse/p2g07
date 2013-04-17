@@ -1,0 +1,17 @@
+package domein;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+public class Document extends Element {
+
+	private String locatie;
+	private Date beginDatum;
+	private Date eindDatum;
+
+	public Document(Date beginDatum, Date eindDatum, String titel,
+			String omschrijving, ArrayList<String> kernwoorden,
+			String doelgroep, String locatie) {
+		throw new UnsupportedOperationException();
+	}
+}

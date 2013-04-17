@@ -1,0 +1,144 @@
+package gui;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import net.miginfocom.swing.MigLayout;
+import domein.Leertraject;
+import domein.LeertrajectController;
+import domein.pattern.observer.Observer;
+
+public class StellingspelToevoegenPanel extends JPanel implements Observer, ActionListener{
+	
+	private LeertrajectController lc;
+	private CardGeneralInfo cardGeneral;
+	private JPanel filler;
+	private JButton btnNext;
+	private AbstractButton btnBack;
+	private AbstractButton btnOpslaan;
+	private ArrayList<VraagAntwoordenPanel> cards;
+	private int currentCard = -1;
+	private VraagAntwoordenPanel newCard;
+
+	public StellingspelToevoegenPanel(LeertrajectController lc) {
+		this.lc = lc;
+		lc.addObserver(this);
+		initGUI();
+		createMigLayout();
+	}
+
+	private void createMigLayout() {
+		filler.add(btnBack,"right,tag ok");
+		filler.add(btnOpslaan,"right,tag ok");
+		filler.add(btnNext,"right,tag ok");
+		add(cardGeneral,"wrap,growx,spany");
+		add(filler,"south");
+	}
+
+	private void initGUI() {
+		setLayout(new MigLayout("hidemode 3 , nocache","[grow,fill,::600]",""));
+		setBackground(new Color(250,250,250));
+		setBorder(BorderFactory.createEmptyBorder());
+		{
+			cardGeneral = new CardGeneralInfo();
+		}
+		{
+			filler = new JPanel(new MigLayout("hidemode 3 , nocache","push[right][right]"));
+			filler.setBackground(new Color(250,250,250));
+			filler.setBorder(BorderFactory.createEmptyBorder());
+			{
+				btnNext = new JButton("Volgende");
+				btnNext.addActionListener(this);
+				btnNext.setVisible(true);
+			}
+			{
+				btnBack = new JButton("Terug");
+				btnBack.addActionListener(this);
+				btnBack.setVisible(false);
+			}
+			{
+				btnOpslaan = new JButton("Opslaan");
+				btnOpslaan.addActionListener(this);
+				btnOpslaan.setVisible(false);
+			}
+		}
+		{
+			cards = new ArrayList<>();
+		}
+	}
+
+	@Override
+	public void update(Object object) {
+		if(object instanceof Leertraject) {
+			clearFields();
+		}
+	}
+
+	private void clearFields() {
+		cardGeneral.clearFields();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		if(event.getSource() == btnNext) {
+			if(lc.getGeselecteerdLeertraject() != null) {
+				btnOpslaan.setVisible(true);
+				btnBack.setVisible(true);
+				btnNext.setVisible(true);
+				cardGeneral.setVisible(false);
+				
+				if(currentCard == -1) {
+					newCard = new VraagAntwoordenPanel();
+					add(newCard,"wrap,growx,spany");
+					cards.add(newCard);
+					currentCard++;
+				}
+				else {
+					if(cards.get(currentCard).validateFields()) {
+						if(currentCard == cards.size() - 1) {
+							newCard = new VraagAntwoordenPanel();
+							cards.get(currentCard).setVisible(false);
+							add(newCard,"wrap,growx,spany");
+							cards.add(newCard);
+							currentCard++;
+						}
+						else {
+							cards.get(currentCard).setVisible(false);
+							currentCard++;
+							cards.get(currentCard).setVisible(true);
+						}
+					}
+				}
+			}
+		}
+		if(event.getSource() == btnBack) {
+			if(currentCard == 0) {
+				btnOpslaan.setVisible(false);
+				btnBack.setVisible(false);
+				btnNext.setVisible(true);
+				cardGeneral.setVisible(true);
+				cards.get(currentCard).setVisible(false);
+			} else {
+				cards.get(currentCard).setVisible(false);
+				cards.get(currentCard - 1).setVisible(true);
+				currentCard--;
+			}
+		}
+	}
+	
+	public boolean validatieFields() {
+		boolean validatie = true;
+	    if(currentCard > -1)
+			validatie = cards.get(currentCard).validateFields();
+	    if(validatie)
+	    	cardGeneral.validateCardInfo();
+	    return validatie;
+	}
+}

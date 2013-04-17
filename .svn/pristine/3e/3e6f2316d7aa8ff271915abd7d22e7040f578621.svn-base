@@ -1,0 +1,68 @@
+@model Project2Groep7.Models.Leertraject
+
+@* This partial view defines form fields that will appear when creating and editing entities *@
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Titel)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Titel)
+    @Html.ValidationMessageFor(model => model.Titel)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Omschrijving)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Omschrijving)
+    @Html.ValidationMessageFor(model => model.Omschrijving)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.StartDatum)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.StartDatum)
+    @Html.ValidationMessageFor(model => model.StartDatum)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Doelgroep)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Doelgroep)
+    @Html.ValidationMessageFor(model => model.Doelgroep)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.BeschikbaarheidVan)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.BeschikbaarheidVan)
+    @Html.ValidationMessageFor(model => model.BeschikbaarheidVan)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.BeschikbaarheidTot)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.BeschikbaarheidTot)
+    @Html.ValidationMessageFor(model => model.BeschikbaarheidTot)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Actief)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Actief)
+    @Html.ValidationMessageFor(model => model.Actief)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Gearchiveerd)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Gearchiveerd)
+    @Html.ValidationMessageFor(model => model.Gearchiveerd)
+</div>
+

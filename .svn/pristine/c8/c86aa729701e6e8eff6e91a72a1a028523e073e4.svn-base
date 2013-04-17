@@ -1,0 +1,19 @@
+using System;
+using System.Collections.Generic;
+
+namespace p2g7.Models.Domain
+{
+    public partial class Stelling
+    {
+        public Stelling()
+        {
+            this.AntwoordenStelling = new List<AntwoordStelling>();
+        }
+
+        public int StellingspelID { get; set; }
+        public string Stelling { get; set; }
+        public int StellingID { get; set; }
+        public virtual ICollection<AntwoordStelling> AntwoordenStelling { get; set; }
+        public virtual Stellingspel Stellingspel { get; set; }
+    }
+}

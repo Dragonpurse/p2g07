@@ -1,0 +1,58 @@
+package domein;
+
+import java.util.*;
+
+import persistentie.PersistentieController;
+
+public class DomeinController {
+
+	@SuppressWarnings("unused")
+	private Collection<Leertraject> leerTrajecten;
+	private Leertraject geselecteerdLeertraject;
+
+	public DomeinController(){
+
+	}
+
+	public void aanmakenLeertraject(String leertrajectCode, String titel,
+			String omschrijving, Calendar startDatum, String doelgroep,
+			Calendar beschikbaarheidVan, Calendar beschikbaarheidTot,
+			String externeMedewerker) {	
+		setGeselecteerdLeertraject(new Leertraject(leertrajectCode, titel, omschrijving, startDatum, doelgroep, beschikbaarheidVan, beschikbaarheidTot, externeMedewerker));
+	}
+
+	public ArrayList<Leertraject> geefLijstLeertrajecten() {
+		return PersistentieController.getInstance().geefLijstLeertrajecten();
+	}
+
+	public Leertraject getGeselecteerdLeertraject() {
+		return this.geselecteerdLeertraject;
+	}
+
+	public void setGeselecteerdLeertraject(Leertraject geselecteerdLeertraject) {
+		this.geselecteerdLeertraject = geselecteerdLeertraject;
+	}
+
+	public void kopieerLeertraject(String leertrajectCode, String titel,
+			String omschrijving, Calendar startDatum, String doelgroep,
+			Calendar beschikbaarheidVan, Calendar beschikbaarheidTot,
+			String externeMedewerker) {
+		// BLALALA KAMI SUCKT EN ELEMENTEN LINKEN
+		// controle eventuele shit
+		
+		if(titel == "" || titel == null){
+			titel = geselecteerdLeertraject.getTitel();
+		}
+		
+		if(omschrijving == "" || omschrijving == null){
+			omschrijving = geselecteerdLeertraject.getOmschrijving();
+		}
+		
+		if(doelgroep == "" || doelgroep == null){
+			doelgroep = geselecteerdLeertraject.getDoelgroep();
+		}
+		
+		setGeselecteerdLeertraject(new Leertraject(leertrajectCode, titel, omschrijving, startDatum, doelgroep, beschikbaarheidVan, beschikbaarheidTot, externeMedewerker));
+		
+	}
+}

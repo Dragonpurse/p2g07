@@ -1,0 +1,52 @@
+using WebMatrix.Data;
+using p2g7.Models.Domain;
+using p2g7.Models.Mapping;
+
+namespace p2g7.Models.DAL
+{
+    public partial class p2g7Context : DbContext
+    {
+        static p2g7Context()
+        {
+            Database.SetInitializer<p2g7Context>(null);
+        }
+
+        public p2g7Context()
+            : base("Name=p2g7Context")
+        {
+        }
+
+        public DbSet<sysdiagram> sysdiagrams { get; set; }
+        public DbSet<AntwoordCasus> AntwoordenCasus { get; set; }
+        public DbSet<AntwoordStelling> AntwoordenStelling { get; set; }
+        public DbSet<Casus> Casussen { get; set; }
+        public DbSet<Deelnemer> Deelnemers { get; set; }
+        public DbSet<Document> Documenten { get; set; }
+        public DbSet<Doos> Dozen { get; set; }
+        public DbSet<Leertraject> Leertrajecten { get; set; }
+        public DbSet<Medewerker> Medewerkers { get; set; }
+        public DbSet<Stelling> Stellingen { get; set; }
+        public DbSet<Stellingspel> Stellingspellen { get; set; }
+        public DbSet<TrajectOnderdeel> TrajectOnderdelen { get; set; }
+        public DbSet<Vraag> Vragen { get; set; }
+        public DbSet<VraagDoos> VragenDoos { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Configurations.Add(new sysdiagramMap());
+            modelBuilder.Configurations.Add(new AntwoordCasusMap());
+            modelBuilder.Configurations.Add(new AntwoordStellingMap());
+            modelBuilder.Configurations.Add(new CasusMap());
+            modelBuilder.Configurations.Add(new DeelnemerMap());
+            modelBuilder.Configurations.Add(new DocumentMap());
+            modelBuilder.Configurations.Add(new DoosMap());
+            modelBuilder.Configurations.Add(new LeertrajectMap());
+            modelBuilder.Configurations.Add(new MedewerkerMap());
+            modelBuilder.Configurations.Add(new StellingMap());
+            modelBuilder.Configurations.Add(new StellingspelMap());
+            modelBuilder.Configurations.Add(new TrajectOnderdelenMap());
+            modelBuilder.Configurations.Add(new VraagMap());
+            modelBuilder.Configurations.Add(new VraagDoosMap());
+        }
+    }
+}

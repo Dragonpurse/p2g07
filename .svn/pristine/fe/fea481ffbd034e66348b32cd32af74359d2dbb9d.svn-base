@@ -1,0 +1,73 @@
+package domein;
+
+import java.util.*;
+
+import javax.swing.table.TableModel;
+
+import org.joda.time.LocalDate;
+
+import domein.tableModel.SoortTableModel;
+
+
+public class LeertrajectController extends Controller {
+	private LeertrajectManager leertrajectManager;
+	private Leertraject geselecteerdLeertraject;
+	
+	public LeertrajectController(){
+		leertrajectManager = new LeertrajectManager(super.getActorID());
+	}
+	
+	public void maakLeertrajectAan(String leertrajectCode, String titel, String omschrijving, LocalDate startDatum, String doelgroep, 
+			                       LocalDate  beschikbaarVan, LocalDate  beschikbaarTot, String externeMedewerker) {
+		Leertraject lt = new Leertraject(leertrajectCode, titel, omschrijving, startDatum, doelgroep, beschikbaarVan, beschikbaarTot, externeMedewerker);
+		leertrajectManager.voegLeertrajectToe(super.getActorID(), lt);
+		setGeselecteerdLeertraject(lt);
+	}
+
+	public void kopieerLeertraject(String leertrajectCode, String titel, String omschrijving, LocalDate  startDatum, String doelgroep, 
+			                       LocalDate  beschikbaarVan, LocalDate  beschikbaarTot, String externeMedewerker) {
+		Leertraject lt = new Leertraject(leertrajectCode, titel, omschrijving, startDatum, doelgroep, beschikbaarVan, beschikbaarTot, externeMedewerker, geselecteerdLeertraject.getOnderdelenLijst());
+		leertrajectManager.voegLeertrajectToe(super.getActorID(), lt);
+		setGeselecteerdLeertraject(lt);
+	}
+
+	public void voegOnderdeelToe(Onderdeel onderdeel) {
+		geselecteerdLeertraject.voegOnderdeelToe(onderdeel);
+	}
+	
+	public void verwijderOnderdeel(Onderdeel onderdeel) {
+		geselecteerdLeertraject.verwijderOnderdeel(onderdeel);
+	}
+	
+	
+	// TableModel methodes
+	
+	public TableModel geefTableModel(SoortTableModel soort){
+		return TableModelFactory.createTableModel(soort, this);
+	}
+	
+	@Override
+	public void update(Observable o, Object object) {
+		setGeselecteerdLeertraject((Leertraject) object);
+		setChanged();
+		notifyObservers(geselecteerdLeertraject);
+	}
+	
+	// Getters & setters
+	public Leertraject getGeselecteerdLeertraject() {
+		return geselecteerdLeertraject;
+	}
+
+	public void setGeselecteerdLeertraject(Leertraject geselecteerdLeertraject) {
+		this.geselecteerdLeertraject = geselecteerdLeertraject;
+	}
+
+	public LeertrajectManager getLeertrajectManager() {
+		return leertrajectManager;
+	}
+
+	public void setLeertrajectManager(LeertrajectManager leertrajectManager) {
+		this.leertrajectManager = leertrajectManager;
+	}
+
+}

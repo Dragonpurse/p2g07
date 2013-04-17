@@ -1,0 +1,339 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. RegistratieGebruikers.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.      
+       FILE-CONTROL.
+           SELECT parameter-invoer 
+           ASSIGN TO parameterfilenaam
+           ORGANIZATION LINE SEQUENTIAL
+           FILE STATUS IS parameter-status.
+       
+           SELECT csv-invoer 
+           ASSIGN TO naam-csv
+           ORGANIZATION LINE SEQUENTIAL
+           FILE STATUS IS csv-in-status.
+       
+           SELECT csv-uitvoer 
+           ASSIGN TO naam-out-csv
+           ORGANIZATION LINE SEQUENTIAL
+           FILE STATUS IS csv-out-status.
+       DATA DIVISION.
+       FILE SECTION.
+       FD parameter-invoer.
+       copy parameter_record.
+       FD csv-invoer.
+       01 csv-in-record                 PIC X(255).
+           88 eof                                     VALUE HIGH-VALUES.
+       FD csv-uitvoer.
+       01 csv-out-record.
+           05 email                     PIC X(50).
+           05                           PIC X         VALUE ";".
+           05 voornaam                  PIC X(25).
+           05                           PIC X         VALUE ";".
+           05 naam                      PIC X(50).
+           05                           PIC X         VALUE ";".
+           05 wachtwoord                PIC X(8).
+       LINKAGE SECTION.
+       01 parameterfilenaam             PIC X(255).
+       WORKING-STORAGE SECTION.
+       01 statuscodes.
+           05 parameter-status          PIC X(2).
+           05 csv-in-status             PIC X(2).
+           05 csv-out-status            PIC X(2).
+       01 condities.
+           05 conditie1                 PIC X.
+               88 bestaande-trajectcode               VALUE HIGH-VALUES.
+           05 conditie2                 PIC X.
+               88 actief-traject                      VALUE HIGH-VALUES.
+           05 conditie3                 PIC X.
+               88 bestaande-deelnemer                 VALUE HIGH-VALUES.
+           05 conditie4                 PIC X.
+               88 ontbrekend-bestand                  VALUE HIGH-VALUES.
+           05 conditie5                 PIC X.
+               88 intern                              VALUE HIGH-VALUES.
+           05 conditie6                 PIC X.
+               88 bestaande-werknemer                 VALUE HIGH-VALUES.
+       01 trajectcode                   PIC X(50).
+       01 naam-csv                      PIC X(50).
+       01 naam-out-csv                  PIC X(50).
+       01 jdbc-string                   PIC X(100).
+       01 huidige-datum                 PIC 9(8).
+       01 errormessage                  PIC X(235). 
+       EXEC SQL BEGIN DECLARE SECTION
+       END-EXEC.
+      * 0 = succes , 100 = no data, -1 = failure
+       01 SQLCODE                       PIC S9(3).
+      * 00xxx is succes
+       01 SQLSTATE                      PIC X(5).
+       01 einddatum-traject             PIC 9(8).
+       01 randomdata                    PIC X(50).
+       EXEC SQL END DECLARE SECTION
+       END-EXEC.
+       
+       PROCEDURE DIVISION USING parameterfilenaam.
+       MAIN-PARAGRAPH.
+       OPEN INPUT parameter-invoer
+       PERFORM 2000-evaluatie-parameter-status
+       
+      *initial read - haalt jdbc-string uit parameters.txt
+       READ parameter-invoer
+         AT END SET eof OF parameter-record TO TRUE
+           CALL "LogHandler" 
+           USING "Het bestand 'parameters.txt' is leeg."
+           STOP RUN
+       END-READ
+       MOVE parameter-record TO jdbc-string
+       PERFORM 3000-connectDatabase
+      
+      *inlezen van traject-code uit parameters.txt
+       READ parameter-invoer
+         AT END SET eof OF parameter-record TO TRUE
+       END-READ
+
+       PERFORM UNTIL eof OF parameter-record
+         INITIALIZE condities
+         MOVE parameter-record TO trajectcode
+         PERFORM 2500-evaluatie-traject
+      
+      *inlezen van naam.csv uit parameters.txt
+         READ parameter-invoer
+           AT END SET eof OF parameter-record TO TRUE
+         END-READ
+         MOVE parameter-record TO naam-csv
+         STRING naam-csv DELIMITED BY "." ".OUT.csv" DELIMITED BY SIZE
+         INTO naam-out-csv
+         IF (bestaande-trajectcode AND actief-traject) OR intern
+         THEN PERFORM 1000-verwerking-csv
+         END-IF
+         
+      *inlezen van traject-code uit parameters.txt
+         READ parameter-invoer
+             AT END SET eof OF parameter-record TO TRUE
+         END-READ
+       END-PERFORM 
+       
+       CLOSE parameter-invoer
+       PERFORM 3100-disconnectDatabase
+       STOP RUN
+       .
+       
+       1000-verwerking-csv.
+       OPEN INPUT csv-invoer
+       PERFORM 2100-evaluatie-csv-status
+          
+       IF ontbrekend-bestand
+       THEN EXIT PARAGRAPH
+       END-IF
+       
+       READ csv-invoer
+         AT END SET eof IN csv-in-record TO TRUE
+                INITIALIZE errormessage
+                STRING "Het bestand '" DELIMITED BY SIZE
+                       naam-csv        DELIMITED BY SPACE
+                       "' is leeg"     DELIMITED BY SIZE
+                       INTO errormessage
+                CALL "LogHandler" USING errormessage
+       END-READ
+
+       OPEN OUTPUT csv-uitvoer
+       PERFORM UNTIL eof IN csv-in-record
+         INITIALIZE conditie3 conditie6
+         UNSTRING csv-in-record DELIMITED BY ";" 
+         INTO email, voornaam, naam
+         
+         IF intern
+         THEN PERFORM 1100-verwerking-medewerker
+         ELSE PERFORM 1200-verwerking-deelnemer
+         END-IF
+         
+         PERFORM 2200-evaluatie-csv-out-status
+         READ csv-invoer
+           AT END SET eof OF csv-in-record TO TRUE
+         END-READ
+       END-PERFORM
+       CLOSE csv-uitvoer
+       CLOSE csv-invoer
+       .
+       
+       1100-verwerking-medewerker.
+       PERFORM 2800-evaluatie-werknemer
+       
+       IF bestaande-werknemer
+       THEN EXIT PARAGRAPH
+       END-IF
+       
+       CALL 'PWGenerator' RETURNING wachtwoord
+       PERFORM 3400-voeg-werknemer-toe
+       WRITE csv-out-record END-WRITE
+       .
+       
+       1200-verwerking-deelnemer.
+       PERFORM 2700-evaluatie-deelnemer
+       IF NOT bestaande-deelnemer
+       THEN CALL 'PWGenerator' RETURNING wachtwoord
+            PERFORM 3200-voeg-deelnemer-toe
+            WRITE csv-out-record END-WRITE
+       ELSE PERFORM 3300-link-deelnemer-met-traject
+       END-IF
+       .
+       
+       2000-evaluatie-parameter-status.
+       EVALUATE parameter-status
+         WHEN "35" CALL "LogHandler"
+                  USING "Het bestand 'parameters.txt' is niet gevonden."
+                  STOP RUN
+       END-EVALUATE
+       .
+       
+       2100-evaluatie-csv-status.
+       EVALUATE csv-in-status
+         WHEN "35" SET ontbrekend-bestand TO TRUE
+                   INITIALIZE errormessage
+                   STRING "Het bestand "      DELIMITED BY SIZE
+                          naam-csv            DELIMITED BY SPACE
+                          " is niet gevonden." DELIMITED BY SIZE
+                   INTO errormessage
+                   CALL "LogHandler" USING errormessage
+       END-EVALUATE
+       .
+       
+       2200-evaluatie-csv-out-status.
+       EVALUATE csv-out-status
+        WHEN NOT "00" CALL "LogHandler" USING "Het programma kan de" 
+                      &"deelnemer niet schrijven naar het csv-bstand."
+       END-EVALUATE
+       .
+       
+       2500-evaluatie-traject.
+       IF trajectcode = "intern"
+       THEN SET intern TO TRUE
+            EXIT PARAGRAPH
+       END-IF
+       
+       EXEC SQL
+           SELECT BeschikbaarheidTot
+           INTO :einddatum-traject
+           FROM tblLeertraject
+           WHERE LeertrajectCode = :trajectcode
+       END-EXEC
+       
+       EVALUATE SQLCODE
+        WHEN 100 SET bestaande-trajectcode TO FALSE
+                 INITIALIZE errormessage
+                 STRING "Het project met trajectcode " DELIMITED BY SIZE
+                        trajectcode      DELIMITED BY SPACE
+                        " bestaat niet." DELIMITED BY SIZE
+                       INTO errormessage
+                 CALL "LogHandler" USING errormessage
+        WHEN 0 SET bestaande-trajectcode TO TRUE
+        WHEN OTHER SET bestaande-trajectcode TO FALSE
+                   INITIALIZE errormessage
+                   STRING "Fout met de communicatie met de databank "
+                                         DELIMITED BY SIZE
+                          "SQLCODE = "   DELIMITED BY SIZE
+                          SQLCODE        DELIMITED BY SPACE
+                          " SQLSTATE = " DELIMITED BY SIZE
+                          SQLSTATE       DELIMITED BY SPACE
+                   INTO errormessage
+                   CALL "LogHandler" USING errormessage
+        
+       END-EVALUATE
+       
+       IF bestaande-trajectcode
+       THEN PERFORM 2600-evaluatie-einddatum-traject
+       END-IF
+       .
+       
+       2600-evaluatie-einddatum-traject.
+       MOVE FUNCTION CURRENT-DATE (1:8) TO huidige-datum
+       IF einddatum-traject - huidige-datum < 0
+           THEN SET actief-traject TO FALSE
+                INITIALIZE errormessage
+                STRING "Het project "     DELIMITED BY SIZE
+                       trajectcode        DELIMITED BY SPACE
+                       " is al afgelopen." DELIMITED BY SIZE
+                       INTO errormessage
+                CALL "LogHandler" USING errormessage
+           ELSE SET actief-traject TO TRUE
+       END-IF
+       .
+       
+              
+       2700-evaluatie-deelnemer.
+       EXEC SQL
+           SELECT email
+           INTO :randomdata
+           FROM tblDeelnemer
+           WHERE Email = :email
+       END-EXEC
+       
+       EVALUATE SQLCODE
+          WHEN 100 SET bestaande-deelnemer TO FALSE            
+          WHEN 0 SET bestaande-deelnemer TO TRUE
+       END-EVALUATE
+       .
+       
+       2800-evaluatie-werknemer.
+       EXEC SQL
+           SELECT email
+           INTO :randomdata
+           FROM tblWerknemer
+           WHERE Email = :email
+       END-EXEC
+       
+       EVALUATE SQLCODE
+          WHEN 100 SET bestaande-werknemer TO FALSE            
+          WHEN 0 SET bestaande-werknemer TO TRUE
+       END-EVALUATE
+       .
+       
+       3000-connectDatabase.
+       EXEC SQL
+        CONNECT
+        TO :jdbc-string  
+        DRIVER "com.microsoft.sqlserver.jdbc.SQLServerDriver"                 
+       END-EXEC
+       .
+       
+       3100-disconnectDatabase.
+       EXEC SQL
+        DISCONNECT
+       END-EXEC
+       .
+       
+       3200-voeg-deelnemer-toe.     
+       EXEC SQL
+           INSERT INTO tblDeelnemer VALUES(:email, :voornaam
+                                         , :naam, :wachtwoord)
+       END-EXEC
+       
+       EXEC SQL
+           COMMIT
+       END-EXEC
+       PERFORM 3300-link-deelnemer-met-traject
+       .
+   
+       3300-link-deelnemer-met-traject.
+       EXEC SQL
+           INSERT INTO tblLeertrajectDeelnemer 
+           VALUES(:trajectcode, :email)
+       END-EXEC
+       
+       EXEC SQL
+           COMMIT
+       END-EXEC
+       .
+       
+       3400-voeg-werknemer-toe.
+       MOVE "true" TO randomdata
+       EXEC SQL
+           INSERT INTO tblWerknemer VALUES(:email, :voornaam
+                                         , :naam, :wachtwoord
+                                         , :randomdata)
+       END-EXEC
+       
+       EXEC SQL
+           COMMIT
+       END-EXEC
+       .
+       

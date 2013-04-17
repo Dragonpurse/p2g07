@@ -1,0 +1,90 @@
+package domein;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import persistentie.Mapper;
+import persistentie.MapperFactory;
+import persistentie.SoortMapper;
+
+public class Leertraject {
+
+	private LeertrajectSpec leertrajectSpec;
+	private List<Onderdeel> onderdelenLijst;
+	private Mapper<Onderdeel> oMapper;
+ 
+
+	
+	public Leertraject(LeertrajectSpec leertrajectSpec) {
+		super();
+		setLeertrajectSpec(leertrajectSpec);
+		setOnderdelenLijst(new ArrayList<Onderdeel>());
+		oMapper = MapperFactory.geefMapper(SoortMapper.ONDERDEEL);
+
+	}
+
+
+
+	public Leertraject(List<Onderdeel> onderdelenLijst) {
+		setOnderdelenLijst(new ArrayList<Onderdeel>());
+		oMapper = MapperFactory.geefMapper(SoortMapper.ONDERDEEL);
+		setOnderdelenLijst(onderdelenLijst);
+	}
+	
+	public void verwijderOnderdeel(Onderdeel onderdeel) {
+		oMapper.verwijderItem(leertrajectSpec.getLeertrajectCode(), onderdeel);
+		onderdelenLijst.remove(onderdeel);
+	}
+
+	public void linkOnderdeel(Onderdeel onderdeel) {
+		if(onderdeel.getDisplayNaam() == null || onderdeel.getDisplayNaam().equals(""))
+			onderdeel.setDisplayNaam(onderdeel.getTitel());
+		if(onderdeel.getDisplayOmschrijving() == null || onderdeel.getDisplayOmschrijving().equals(""))
+			onderdeel.setDisplayOmschrijving(onderdeel.getOmschrijving());
+		if(onderdeel.getBeschikbaarVan() == null);
+			onderdeel.setBeschikbaarVan(leertrajectSpec.getBeschikbaarheidVan());
+		if(onderdeel.getBeschikbaarTot() == null)
+			onderdeel.setBeschikbaarTot(leertrajectSpec.getBeschikbaarheidTot());
+		
+	    oMapper.voegItemToe(leertrajectSpec.getLeertrajectCode(), onderdeel);
+	    onderdelenLijst.add(onderdeel);
+	}
+	
+	// tableModel methodes
+
+	public Onderdeel geefOnderdeel(int index){
+		return onderdelenLijst.get(index);
+	}
+	
+	public int geefAantalOnderdelen(){
+		return onderdelenLijst.size();
+	}
+	
+	// 	getters & setters
+	
+	public LeertrajectSpec getLeertrajectSpec() {
+		return leertrajectSpec;
+	}
+
+	public void setLeertrajectSpec(LeertrajectSpec leertrajectSpec) {
+		this.leertrajectSpec = leertrajectSpec;
+	}
+	
+	public List<Onderdeel> getOnderdelenLijst() {
+		return onderdelenLijst;
+	}
+
+	public void setOnderdelenLijst(List<Onderdeel> onderdelenLijst) {
+		Iterator<Onderdeel> it = onderdelenLijst.iterator();
+		while(it.hasNext()){
+			Onderdeel o = it.next();
+			if(o.getBeschikbaarVan() == null)
+				o.setBeschikbaarVan(leertrajectSpec.getBeschikbaarheidVan());
+			if(o.getBeschikbaarTot() == null)
+				o.setBeschikbaarTot(leertrajectSpec.getBeschikbaarheidTot());
+		}
+		this.onderdelenLijst = onderdelenLijst;
+	}
+
+}

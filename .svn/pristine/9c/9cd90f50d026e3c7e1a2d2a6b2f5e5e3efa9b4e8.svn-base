@@ -1,0 +1,24 @@
+package persistentie;
+
+import java.util.ArrayList;
+
+import domein.Document;
+import domein.Leertraject;
+
+public class PersistentieController {
+
+	private LeertrajectMapper leertrajectMapper;
+	private DocumentMapper documentMapper;
+
+	public void voegTrajectToe(Leertraject leertraject) {
+		throw new UnsupportedOperationException();
+	}
+
+	public ArrayList<domein.Leertraject> geefLijstTrajecten() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void voegDocumentToe(Document document) {
+		throw new UnsupportedOperationException();
+	}
+}

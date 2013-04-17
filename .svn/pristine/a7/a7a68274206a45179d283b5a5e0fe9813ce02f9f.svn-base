@@ -1,0 +1,21 @@
+using System;
+using System.Collections.Generic;
+
+namespace p2g7.Models.Domain
+{
+    public partial class Vraag
+    {
+        public Vraag()
+        {
+            this.AntwoordenCasus1 = new List<AntwoordCasus>();
+            this.AntwoordenCasus2 = new List<AntwoordCasus>();
+            this.Casussen = new List<Casus>();
+        }
+
+        public int VraagID { get; set; }
+        public string VraagTekst { get; set; }
+        public virtual ICollection<AntwoordCasus> AntwoordenCasus1 { get; set; }
+        public virtual ICollection<AntwoordCasus> AntwoordenCasus2 { get; set; }
+        public virtual ICollection<Casus> Casussen { get; set; }
+    }
+}

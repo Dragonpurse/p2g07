@@ -1,0 +1,51 @@
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using Project2Groep7.Models.Mapping;
+
+namespace Project2Groep7.Models
+{
+    public partial class p2g7Context : DbContext
+    {
+        static p2g7Context()
+        {
+            Database.SetInitializer<p2g7Context>(null);
+        }
+
+        public p2g7Context()
+            : base("Name=p2g7Context")
+        {
+        }
+
+        public DbSet<tblAntwoordCasu> tblAntwoordCasus { get; set; }
+        public DbSet<tblAntwoordStelling> tblAntwoordStellings { get; set; }
+        public DbSet<Casus> tblCasus { get; set; }
+        public DbSet<tblDeelnemer> tblDeelnemers { get; set; }
+        public DbSet<Document> tblDocuments { get; set; }
+        public DbSet<Doos> tblDoos { get; set; }
+        public DbSet<Leertraject> Leertraject { get; set; }
+        public DbSet<Medewerker> Medewerkers { get; set; }
+        public DbSet<tblStelling> tblStellings { get; set; }
+        public DbSet<Stellingspel> tblStellingspels { get; set; }
+        public DbSet<TrajectOnderdeel> TrajectOnderdelen { get; set; }
+        public DbSet<tblVraag> tblVraags { get; set; }
+        public DbSet<tblVraagDoo> tblVraagDoos { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Configurations.Add(new tblAntwoordCasuMap());
+            modelBuilder.Configurations.Add(new tblAntwoordStellingMap());
+            modelBuilder.Configurations.Add(new tblCasuMap());
+            modelBuilder.Configurations.Add(new tblDeelnemerMap());
+            modelBuilder.Configurations.Add(new tblDocumentMap());
+            modelBuilder.Configurations.Add(new tblDooMap());
+            modelBuilder.Configurations.Add(new tblLeertrajectMap());
+            modelBuilder.Configurations.Add(new tblMedewerkerMap());
+            modelBuilder.Configurations.Add(new tblStellingMap());
+            modelBuilder.Configurations.Add(new tblStellingspelMap());
+            modelBuilder.Configurations.Add(new tblTrajectOnderdelenMap());
+            modelBuilder.Configurations.Add(new tblVraagMap());
+            modelBuilder.Configurations.Add(new tblVraagDooMap());
+        }
+
+    }
+}

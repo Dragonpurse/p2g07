@@ -1,0 +1,31 @@
+package gui;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+import javax.swing.JPanel;
+import javax.swing.table.AbstractTableModel;
+
+import domein.tableModel.SoortTableModel;
+
+public class TrajectDetailsPanel extends JPanel {
+
+	public TrajectDetailsPanel(AbstractTableModel model) {
+		super();
+		initGUI(model);
+	}
+
+	private void initGUI(AbstractTableModel model) {
+		this.setLayout(new BorderLayout());
+		JPanel onderdeelPanel = new OverzichtPanel(model);
+		this.add(onderdeelPanel, BorderLayout.CENTER);
+		
+		JPanel onderdeelInfoPanel = new JPanel();
+		onderdeelInfoPanel.setMaximumSize(new Dimension(10000,200));
+		onderdeelInfoPanel.setMinimumSize(new Dimension(0,200));
+		onderdeelInfoPanel.setPreferredSize(new Dimension(0,200));
+		this.add(onderdeelInfoPanel, BorderLayout.NORTH);
+		
+	}
+
+}

@@ -1,0 +1,41 @@
+package domein;
+
+import java.util.List;
+import persistentie.Mapper;
+import persistentie.MapperFactory;
+import persistentie.SoortMapper;
+
+public class LeertrajectManager {
+	
+	private List<Leertraject> trajectLijst;
+	private List<Leertraject> trajectActorLijst;
+	private Mapper<Leertraject> lm;
+
+	public LeertrajectManager(String actorID){
+		lm = MapperFactory.geefMapper(SoortMapper.LEERTRAJECT);
+		trajectActorLijst = lm.geefLijstPerItem(actorID);
+		trajectLijst = lm.geefLijst();
+	}
+	
+	public void voegLeertrajectToe(String actorID, Leertraject lt) {
+		lm.voegItemToe(actorID, lt);
+	}
+	
+	// TableModel methodes
+
+	public int geefAantalLeertrajecten() {
+		return trajectLijst.size();
+	}
+	
+	public int geefAantalLeertrajectenPerActor() {
+		return trajectActorLijst.size();
+	}
+
+	public Leertraject geefLeertraject(int index) {
+		return trajectLijst.get(index);
+	}
+
+	public Leertraject geefLeertrajectVanActor(int index) {
+		return trajectActorLijst.get(index);
+	}
+}

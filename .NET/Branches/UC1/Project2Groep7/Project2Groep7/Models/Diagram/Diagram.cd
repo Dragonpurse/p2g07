@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Project2Groep7.Models.Medewerker">
+    <Position X="6.25" Y="0.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAgACAAAIAAAAAARAAAEAAAAAIAAAQAAAAAAAA=</HashCode>
+      <FileName>Models\Medewerker.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Leertrajecten" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.LeertrajectenModel" Collapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Leertraject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Project2Groep7.Models.Leertraject">
+    <Position X="6.75" Y="4" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAgAAAAQAAAAAQDAAACAAAAEAoBAQAAA=</HashCode>
+      <FileName>Models\Leertraject.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="TrajectOnderdelens" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.TrajectOnderdeel">
+    <Position X="12.25" Y="4.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>IAAAIAAAAIAQAAAEAAAAAAAIEAIAAAAAAQAAABgAAAE=</HashCode>
+      <FileName>Models\TrajectOnderdeel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Project2Groep7.Models.Document">
+    <Position X="16.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAIAgAAAAAAAAAAQAACAAAAAAAAIAAQAAA=</HashCode>
+      <FileName>Models\Document.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="TrajectOnderdelen" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.Doos">
+    <Position X="16.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAgAAAAAAAQAAQAACAAAAAAAAIAIQAAA=</HashCode>
+      <FileName>Models\Doos.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="TrajectOnderdelen" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.Stellingspel">
+    <Position X="16.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAgAAAAAAAAAQQAACAAAAAAAAIAAQAAA=</HashCode>
+      <FileName>Models\Stellingspel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="TrajectOnderdelen" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.Casus">
+    <Position X="16.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAABAAAAAAAwAACAAAAAABAIBAQQAA=</HashCode>
+      <FileName>Models\Casus.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="TrajectOnderdelen" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.VraagDoos">
+    <Position X="19" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Models\VraagDoos.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="doos" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.Stelling">
+    <Position X="19" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEBIAAAAAAAAAAAAAQAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Models\Stelling.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="stellingspel" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.AntwoordStelling">
+    <Position X="21.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAIEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\AntwoordStelling.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="stelling" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.Deelnemer">
+    <Position X="6.75" Y="8.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgACAAAIAAAAAABAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Deelnemer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Leertrajecten" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.Vraag">
+    <Position X="19" Y="10.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAACBABAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Vraag.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Casussen" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Project2Groep7.Models.AntwoordCasus">
+    <Position X="22.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAFAAAAABAAACAAAAAAAAAAAgAAAEAAAAAA=</HashCode>
+      <FileName>Models\AntwoordCasus.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="vraag" />
+      <Property Name="vraag1" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

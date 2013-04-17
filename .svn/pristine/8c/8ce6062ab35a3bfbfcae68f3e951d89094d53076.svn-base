@@ -1,0 +1,70 @@
+@model IEnumerable<Project2Groep7.Models.Leertraject>
+
+@{
+    ViewBag.Title = "Lijst van leertrajecten";
+}
+
+@if(User.Identity.IsAuthenticated)
+{
+
+        <h1>Index</h1>
+
+        if (Model.Count() == 0)
+        {
+            <h2>Er zijn geen leertrajecten aan u toegewezen</h2>
+        }
+        else
+        {
+            <p></p>
+            <table border="1" style="font-size:x-small">
+                <tr>
+                    <th>
+                        Titel
+                    </th>
+                    <th>
+                        Omschrijving
+                    </th>
+                    <th>
+                        Start Datum
+                    </th>
+                    <th>
+                        Doelgroep
+                    </th>
+                    <th>
+                        Van
+                    </th>
+                    <th>
+                        Tot
+                    </th>
+                    <th></th>
+                </tr>
+
+            @foreach (var item in Model) {
+                <tr>
+                    <td>
+			            @item.Titel
+                    </td>
+                    <td>
+			            @item.Omschrijving
+                    </td>
+                    <td>
+			            @String.Format("{0:g}", item.StartDatum)
+                    </td>
+                    <td>
+			            @item.Doelgroep
+                    </td>
+                    <td>
+			            @String.Format("{0:g}", item.BeschikbaarheidVan)
+                    </td>
+                    <td>
+			            @String.Format("{0:g}", item.BeschikbaarheidTot)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Bekijk", "ViewLeertraject", new { leertrajectCode = item.LeertrajectCode })            
+                    </td>
+                </tr>
+            }
+
+            </table>
+        }
+}

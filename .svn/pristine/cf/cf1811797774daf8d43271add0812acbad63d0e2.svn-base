@@ -1,0 +1,109 @@
+package domein;
+
+import java.util.*;
+
+public class Leertraject {
+
+	private String leertrajectCode;
+	private String titel;
+	private String omschrijving;
+	private Calendar startdatum;
+	private String doelgroep;
+	private Calendar beschikbaarheidVan;
+	private Calendar beschikbaarheidTot;
+	private String externeMedewerker;
+
+	public Leertraject(String leertrajectCode, String titel,
+			String omschrijving, Calendar startDatum, String doelgroep,
+			Calendar beschikbaarheidVan, Calendar beschikbaarheidTot,
+			String externeMedewerker) {
+		
+		setLeertrajectCode(leertrajectCode);
+		setTitel(titel);
+		setOmschrijving(omschrijving);
+		setStartdatum(startDatum);
+		setDoelgroep(doelgroep);
+		setBeschikbaarheidVan(beschikbaarheidVan);
+		setBeschikbaarheidTot(beschikbaarheidTot);
+		setExterneMedewerker(externeMedewerker);	
+	}
+
+	public String getLeertrajectCode() {
+		return this.leertrajectCode;
+	}
+
+	public void setLeertrajectCode(String leertrajectCode) {
+		this.leertrajectCode = leertrajectCode;
+	}
+
+	public String getTitel() {
+		return this.titel;
+	}
+	
+ 
+//^\s*[a-zA-Z,\s]+\s*$
+
+	public void setTitel(String titel) {
+		if(titel.matches("[a-zA-Z0-9À-ž\\s-]*"))
+				this.titel = titel;
+		else throw new IllegalArgumentException();
+	}
+
+	public String getOmschrijving() {
+		return this.omschrijving;
+	}
+
+	public void setOmschrijving(String omschrijving) {
+		this.omschrijving = omschrijving;
+	}
+
+	public Calendar getStartdatum() {
+		return this.startdatum;
+	}
+
+	public void setStartdatum(Calendar startdatum) {
+		this.startdatum = startdatum;
+	}
+
+	public String getDoelgroep() {
+		return this.doelgroep;
+	}
+
+	public void setDoelgroep(String doelgroep) {
+		this.doelgroep = doelgroep;
+	}
+
+	public Calendar getBeschikbaarheidVan() {
+		return this.beschikbaarheidVan;
+	}
+
+	public void setBeschikbaarheidVan(Calendar beschikbaarheidVan) {
+		this.beschikbaarheidVan = beschikbaarheidVan;
+	}
+
+	public Calendar getBeschikbaarheidTot() {
+		return this.beschikbaarheidTot;
+	}
+
+	public void setBeschikbaarheidTot(Calendar beschikbaarheidTot) {
+		this.beschikbaarheidTot = beschikbaarheidTot;
+	}
+
+	public String getExterneMedewerker() {
+		return this.externeMedewerker;
+	}
+
+	public void setExterneMedewerker(String externeMedewerker) {
+		
+		if(externeMedewerker == "" || externeMedewerker == null)
+			this.externeMedewerker = "";
+		else this.externeMedewerker = externeMedewerker;
+	}
+
+	public void leerTraject(String leertrajectCode, String titel,
+			String omschrijving, Date startDatum, String doelgroep,
+			Date beschikbaarheidVan, Date beschikbaarheidTot,
+			String externeMedewerker) {
+		throw new UnsupportedOperationException();
+	}
+}

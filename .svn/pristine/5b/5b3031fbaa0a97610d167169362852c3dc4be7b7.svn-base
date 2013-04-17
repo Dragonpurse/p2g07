@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblTrajectOnderdelen
+    
+    {
+        [Key]
+        [Column(Order = 0)]
+        public string LeertrajectCode { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int OnderdeelID { get; set; }
+        [Key]
+        [Column(Order = 2)]
+        public string Type { get; set; }
+        public string DisplayNaam { get; set; }
+        public string DisplayOmschrijving { get; set; }
+        public System.DateTime BeschikbaarVan { get; set; }
+        public System.DateTime BeschikbaarTot { get; set; }
+        public virtual tblCasu tblCasu { get; set; }
+        public virtual tblDocument tblDocument { get; set; }
+        public virtual tblDoo tblDoo { get; set; }
+        public virtual Leertraject tblLeertraject { get; set; }
+        public virtual tblStellingspel tblStellingspel { get; set; }
+    }
+}

@@ -1,0 +1,133 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Project2Groep7.Models;
+
+namespace Project2Groep7.Controllers
+{
+    [Authorize]
+    public class LeertrajectController : Controller
+    {
+		private readonly ILeertrajectRepository leertrajectRepository;
+        private readonly IMedewerkerRepository medewerkerRepository;
+        public IEnumerable<Leertraject> leertrajecten { get; set; }
+
+		// If you are using Dependency Injection, you can delete the following constructor
+        //public LeertrajectController() : this(new LeertrajectRepository())
+        //{
+        //}
+
+        public LeertrajectController(ILeertrajectRepository leertrajectRepository, IMedewerkerRepository medewerkerRepository)
+        {
+            this.leertrajectRepository = leertrajectRepository;
+            this.medewerkerRepository = medewerkerRepository;
+        }
+
+        //
+        // GET: /tblLeertrajects/
+
+        public ViewResult Index()
+        {
+            return View(GetLeertrajecten());
+        }
+
+        public ActionResult ViewLeertraject(string leertrajectCode)
+        {
+            Leertraject traject = leertrajectRepository.FindById(leertrajectCode);
+            return View(traject);
+        }
+
+        public IEnumerable<Leertraject> GetLeertrajecten()
+        {
+            Medewerker medewerker = medewerkerRepository.FindByEmail(User.Identity.Name);
+            IEnumerable<Leertraject> leertrajecten = medewerker.tblLeertrajects.OrderBy(l => l.LeertrajectCode);
+            return leertrajecten;
+        }
+
+        //
+        // GET: /tblLeertrajects/Details/5
+
+        public ViewResult Details(string id)
+        {
+            return View(leertrajectRepository.FindById(id));
+        }
+
+        //
+        // GET: /tblLeertrajects/Create
+
+        public ActionResult Create()
+        {
+            return View();
+        } 
+
+        //
+        // POST: /tblLeertrajects/Create
+
+        [HttpPost]
+        public ActionResult Create(Leertraject tblleertraject)
+        {
+            if (ModelState.IsValid) {
+                leertrajectRepository.InsertOrUpdate(tblleertraject);
+                leertrajectRepository.Save();
+                return RedirectToAction("Index");
+            } else {
+				return View();
+			}
+        }
+        
+        //
+        // GET: /tblLeertrajects/Edit/5
+ 
+        public ActionResult Edit(string id)
+        {
+            return View(leertrajectRepository.FindById(id));
+        }
+
+        //
+        // POST: /tblLeertrajects/Edit/5
+
+        [HttpPost]
+        public ActionResult Edit(Leertraject tblleertraject)
+        {
+            if (ModelState.IsValid) {
+                leertrajectRepository.InsertOrUpdate(tblleertraject);
+                leertrajectRepository.Save();
+                return RedirectToAction("Index");
+            } else {
+				return View();
+			}
+        }
+
+        //
+        // GET: /tblLeertrajects/Delete/5
+ 
+        public ActionResult Delete(string id)
+        {
+            return View(leertrajectRepository.FindById(id));
+        }
+
+        //
+        // POST: /tblLeertrajects/Delete/5
+
+        [HttpPost, ActionName("Delete")]
+        public ActionResult DeleteConfirmed(string id)
+        {
+            leertrajectRepository.Delete(id);
+            leertrajectRepository.Save();
+
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                leertrajectRepository.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+    }
+}
+

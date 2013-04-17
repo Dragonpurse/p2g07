@@ -1,0 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblCasu
+    {
+        public tblCasu()
+        {
+            this.tblTrajectOnderdelens = new List<TrajectOnderdelen>();
+        }
+
+        [Key]
+        public int CasusID { get; set; }
+        public string Titel { get; set; }
+        public string Omschrijving { get; set; }
+        public string LocatieFilm { get; set; }
+        public string Doelgroep { get; set; }
+        public string Situatieschets { get; set; }
+        public int EersteVraag { get; set; }
+        public string Kernwoorden { get; set; }
+        public virtual ICollection<TrajectOnderdelen> tblTrajectOnderdelens { get; set; }
+        public virtual tblVraag tblVraag { get; set; }
+    }
+}

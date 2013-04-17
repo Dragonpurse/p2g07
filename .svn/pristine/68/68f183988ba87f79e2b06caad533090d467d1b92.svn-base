@@ -1,0 +1,45 @@
+package domein;
+
+import java.util.List;
+
+public class Stellingspel extends Onderdeel {
+	private List<StellingAntwoord> standaardAntwoorden;
+	private List<Stelling> stellingen;
+	
+	public Stellingspel(){
+		super();
+		this.setType(SoortOnderdeel.STELLINGSPEL);
+	}
+	
+	public void insertStelling(Stelling stelling){
+		stellingen.add(stelling);
+	}
+	
+	public void insertStellingMetStandaardAntwoorden(String stelling){
+		Stelling nieuweStelling = new Stelling(stelling, standaardAntwoorden);
+		stellingen.add(nieuweStelling);
+	}
+
+	public List<StellingAntwoord> getStandaardAntwoorden() {
+		return standaardAntwoorden;
+	}
+
+	public void setStandaardAntwoorden(List<StellingAntwoord> standaardAntwoorden) {
+		this.standaardAntwoorden = standaardAntwoorden;
+	}
+
+	public List<Stelling> getStellingen() {
+		return stellingen;
+	}
+
+	public void setStellingen(List<Stelling> stellingen) {
+		this.stellingen = stellingen;
+	}
+
+
+
+	
+	
+	
+
+}

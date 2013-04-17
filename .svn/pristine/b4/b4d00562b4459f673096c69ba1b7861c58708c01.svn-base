@@ -1,0 +1,21 @@
+package domein;
+
+import domein.pattern.observer.Observer;
+import domein.pattern.observer.Subject;
+
+public abstract class Controller implements Observer, Subject{
+	
+	private Medewerker medewerker;
+	
+	public Controller(){
+		setMedewerker(new Medewerker("admin",true));
+	}
+
+	public Medewerker getMedewerker() {
+		return medewerker;
+	}
+
+	public void setMedewerker(Medewerker medewerker) {
+		this.medewerker = medewerker;
+	}
+}

@@ -1,0 +1,24 @@
+        |Pseudocode UC3
+        |
+        |OPEN INPUT parametersCasusOverzicht
+        |PERFORM connectie-database
+        |PERFORM UNTIL eof-parametersCasusOverzicht
+        |READ casusid
+        |EVALUATE casusid
+        |PERFORM maakRapport
+        |END-PERFORM
+        |CLOSE parameterbestand
+        |
+        |maakRapport.
+        |OPEN OUTPUT rapport
+        |SELECT titel,omschrijving,kernwoorden,doelgroep,locatiefilm,situatieschets
+        |FROM tblcasus
+        |WHERE casusid = :casusid
+        |UNSTRING situatieschets INTO ...
+        |WRITE...
+        |Vragen + antwoorden (feedback + volgnummer) ophalen
+        |WRITE...
+        |CLOSE rapport
+
+000100 IDENTIFICATION DIVISION.
+000200 PROGRAM-ID. OverzichtCasus.

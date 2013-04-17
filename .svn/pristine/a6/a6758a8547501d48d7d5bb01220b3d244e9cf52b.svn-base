@@ -1,0 +1,65 @@
+@model IEnumerable<Project2Groep7.Models.Leertraject>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table border="1" style="font-size:x-small">
+    <tr>
+        <th></th>
+        <th>
+            Titel
+        </th>
+        <th>
+            Omschrijving
+        </th>
+        <th>
+            StartDatum
+        </th>
+        <th>
+            Doelgroep
+        </th>
+        <th>
+            BeschikbaarheidVan
+        </th>
+        <th>
+            BeschikbaarheidTot
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.LeertrajectCode }) |
+            @Html.ActionLink("Details", "Details", new { id=item.LeertrajectCode }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.LeertrajectCode })
+        </td>
+        <td>
+			@item.Titel
+        </td>
+        <td>
+			@item.Omschrijving
+        </td>
+        <td>
+			@String.Format("{0:g}", item.StartDatum)
+        </td>
+        <td>
+			@item.Doelgroep
+        </td>
+        <td>
+			@String.Format("{0:g}", item.BeschikbaarheidVan)
+        </td>
+        <td>
+			@String.Format("{0:g}", item.BeschikbaarheidTot)
+        </td>
+    </tr>
+}
+
+</table>
+
+

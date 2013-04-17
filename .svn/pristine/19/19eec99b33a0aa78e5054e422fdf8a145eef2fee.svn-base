@@ -1,0 +1,12 @@
+package domein;
+
+import javax.swing.table.AbstractTableModel;
+
+@SuppressWarnings("unused")
+public class TableModelFactory {
+
+//	public AbstractTableModel createTableModel(SoortTableModel soort,
+//			Controller controller) {
+//		throw new UnsupportedOperationException();
+//	}
+}

@@ -1,0 +1,7 @@
+jdbc:sqlserver://localhost\SQLEXPRESS;databaseName=p2g7;userName=admin;password=admin
+A001
+test.csv
+00002
+test2.csv
+00003
+test3.csv

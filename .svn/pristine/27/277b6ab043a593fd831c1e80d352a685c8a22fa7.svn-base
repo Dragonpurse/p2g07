@@ -1,0 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblVraagDoo
+    {
+        [Key]
+        public int DoosID { get; set; }
+        public string Vraag { get; set; }
+        public virtual Doos tblDoo { get; set; }
+    }
+}

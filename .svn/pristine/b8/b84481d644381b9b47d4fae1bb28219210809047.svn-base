@@ -1,0 +1,164 @@
+package persistentie;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.joda.time.LocalDate;
+import domein.Leertraject;
+import domein.LeertrajectSpec;
+import domein.Medewerker;
+import domein.Onderdeel;
+
+public class LeertrajectMapper extends Mapper<Leertraject> {
+	
+	private List<Leertraject> ltLijst;
+	private List<Medewerker> mLijst;
+	private DbConnectie dbCon;
+	private Mapper<Onderdeel> om;
+	
+	public LeertrajectMapper(){
+		dbCon = new DbConnectie();
+		om = MapperFactory.geefMapper(SoortMapper.ONDERDEEL);
+	}
+	
+	@Override
+	public List<Leertraject> geefLijst() {
+		ltLijst = new ArrayList<>();
+		dbCon.openConnection();
+		try {
+			String sqlQuery = "SELECT * FROM tblLeertraject";
+			Connection con = dbCon.getConn();
+			PreparedStatement pstmt = con.prepareStatement(sqlQuery);
+		    ResultSet rs = pstmt.executeQuery();
+
+			while(rs.next()){
+				LeertrajectSpec ltSpec = new LeertrajectSpec();
+				ltSpec.setLeertrajectCode(rs.getString("LeertrajectCode"));
+				ltSpec.setTitel(rs.getString("Titel"));
+				ltSpec.setOmschrijving(rs.getString("Omschrijving"));
+				ltSpec.setStartdatum(LocalDate.fromDateFields(rs.getDate("startDatum")));
+				ltSpec.setDoelgroep(rs.getString("Doelgroep"));
+				ltSpec.setBeschikbaarheidVan(LocalDate.fromDateFields(rs.getDate("BeschikbaarheidVan")));
+				ltSpec.setBeschikbaarheidTot(LocalDate.fromDateFields(rs.getDate("BeschikbaarheidTot")));
+				ltSpec.setMedewerkersLijst(geefMedewerkersTraject(rs.getString("LeertrajectCode")));
+				Leertraject lt = new Leertraject(ltSpec);
+				lt.setOnderdelenLijst(om.geefLijstPerItem(rs.getString("LeertrajectCode")));
+				ltLijst.add(lt);
+			}
+		    rs.close();
+		    pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			dbCon.closeConnection();
+		}
+		return ltLijst;
+	}
+	
+	@Override
+	public List<Leertraject> geefLijstPerItem(String actorID) {
+		ltLijst = new ArrayList<>();
+		dbCon.openConnection();
+		try {
+			String sqlQuery = "SELECT * FROM tblLeertraject WHERE GebruikerID = '"+actorID+"'";
+			Connection con = dbCon.getConn();
+			PreparedStatement pstmt = con.prepareStatement(sqlQuery);
+		    ResultSet rs = pstmt.executeQuery();
+		    
+			while(rs.next()){
+				LeertrajectSpec ltSpec = new LeertrajectSpec();
+				ltSpec.setLeertrajectCode(rs.getString("LeertrajectCode"));
+				ltSpec.setTitel(rs.getString("Titel"));
+				ltSpec.setOmschrijving(rs.getString("Omschrijving"));
+				ltSpec.setStartdatum(LocalDate.fromDateFields(rs.getDate("startDatum")));
+				ltSpec.setDoelgroep(rs.getString("Doelgroep"));
+				ltSpec.setBeschikbaarheidVan(LocalDate.fromDateFields(rs.getDate("BeschikbaarheidVan")));
+				ltSpec.setBeschikbaarheidTot(LocalDate.fromDateFields(rs.getDate("BeschikbaarheidTot")));
+				ltSpec.setMedewerkersLijst(geefMedewerkersTraject(rs.getString("LeertrajectCode")));
+				Leertraject lt = new Leertraject(ltSpec);
+				lt.setOnderdelenLijst(om.geefLijstPerItem(rs.getString("LeertrajectCode")));
+				ltLijst.add(lt);
+			}
+		    rs.close();
+		    pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			dbCon.closeConnection();
+		}
+		return ltLijst;
+	}
+
+	@Override
+	public void voegItemToe(Leertraject lt){
+		dbCon.openConnection();
+		try { 
+			LeertrajectSpec ltSpec= lt.getLeertrajectSpec();
+			String sqlQuery = "INSERT INTO tblLeertraject VALUES ('"
+							  +ltSpec.getLeertrajectCode()+"','"
+		                      +ltSpec.getTitel()+"','"
+		                      +ltSpec.getOmschrijving()+"','"
+		                      +ltSpec.getStartdatum()+"','"
+		                      +ltSpec.getDoelgroep()+"','"
+		                      +ltSpec.getBeschikbaarheidVan()+"','"
+		                      +ltSpec.getBeschikbaarheidTot()+"')";
+			Connection con = dbCon.getConn();
+			PreparedStatement pstmt = con.prepareStatement(sqlQuery);
+		    pstmt.executeUpdate();
+		    
+		    linkMedewerkersTraject(ltSpec.getLeertrajectCode(), ltSpec.getMedewerkerLijst());
+		    
+			Iterator<Onderdeel> it = lt.getOnderdelenLijst().iterator();
+			while(it.hasNext()) {
+		    	om.voegItemToe(ltSpec.getLeertrajectCode(), it.next());
+		    } 
+		    pstmt.close();
+		} catch (SQLException e) {
+			if(e.getSQLState().equals("23000")){
+				throw new IllegalArgumentException("Deze leertrajectcode bestaat al.");
+			}
+		}
+		finally{
+			dbCon.closeConnection();
+		}
+	}
+	
+	private void linkMedewerkersTraject(String LeertrajectCode, List<Medewerker> medewerkerLijst){
+		try {
+			for(Medewerker m : medewerkerLijst) {
+				String sqlQuery = "INSERT INTO tblLeertrajectGebruiker VALUES ('"
+						          +LeertrajectCode+"','"+m.getLogin()+"')";
+				Connection con = dbCon.getConn();
+				PreparedStatement pstmt = con.prepareStatement(sqlQuery);
+			    pstmt.executeUpdate();
+					          
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private List<Medewerker> geefMedewerkersTraject(String LeertrajectCode){
+		mLijst = new ArrayList<>();
+		try {
+			String sqlQuery = "SELECT * FROM tblGebruiker tg JOIN tblLeertrajectGebruiker tlg ON tlg.GebruikerID = tg.gebruikerID WHERE tlg.LeertrajectCode ='"+LeertrajectCode+"'";
+			Connection con = dbCon.getConn();
+			PreparedStatement pstmt = con.prepareStatement(sqlQuery);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				mLijst.add(new Medewerker(rs.getString("GebruikerID"),rs.getBoolean("Intern")));
+			}
+			rs.close();
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return mLijst;
+	}
+}

@@ -1,0 +1,16 @@
+package domein;
+
+import java.util.Calendar;
+
+public interface Controller {
+	public void aanmakenLeertraject(String leertrajectCode, String titel,
+			String omschrijving, Calendar startDatum, String doelgroep,
+			Calendar beschikbaarheidVan, Calendar beschikbaarheidTot,
+			String externeMedewerker);
+	public void kopieerLeertraject(String leertrajectCode, String titel,
+			String omschrijving, Calendar startDatum, String doelgroep,
+			Calendar beschikbaarheidVan, Calendar beschikbaarheidTot,
+			String externeMedewerker);
+	public void voegOnderdeelToe(Onderdeel onderdeel);
+	public void verwijderOnderdeel(Onderdeel onderdeel);
+}

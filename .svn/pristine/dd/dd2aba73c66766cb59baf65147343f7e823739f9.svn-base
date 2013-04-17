@@ -1,0 +1,18 @@
+﻿@model Project2Groep7.Models.Document
+@{
+    ViewBag.Title = "_PartialViewDocument";
+}
+
+@{
+    string url = "http://docs.google.com/gview?url=" + @Model.Locatie + "&embedded=true";
+}
+
+<h2>_PartialViewDocument</h2>
+@Model.Titel
+@Model.Omschrijving
+
+
+
+<p>
+    <iframe src="@url" style="width:600px; height:500px;" frameborder="0"></iframe>
+</p>

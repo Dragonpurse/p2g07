@@ -1,0 +1,23 @@
+using p2g7.Models.Domain;
+
+namespace p2g7.Models.Mapping
+{
+    public class VraagMap : EntityTypeConfiguration<Vraag>
+    {
+        public VraagMap()
+        {
+            // Primary Key
+            this.HasKey(t => t.VraagID);
+
+            // Properties
+            this.Property(t => t.VraagTekst)
+                .IsRequired()
+                .HasMaxLength(1000);
+
+            // Table & Column Mappings
+            this.ToTable("tblVraag");
+            this.Property(t => t.VraagID).HasColumnName("VraagID");
+            this.Property(t => t.VraagTekst).HasColumnName("VraagTekst");
+        }
+    }
+}

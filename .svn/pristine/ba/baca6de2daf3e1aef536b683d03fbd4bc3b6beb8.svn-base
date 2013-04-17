@@ -1,0 +1,17 @@
+package domein;
+
+import java.util.List;
+
+import org.joda.time.LocalDate;
+
+public class OnderdelenFactory {
+	public Onderdeel maakOnderdeelaan(String displayNaam, String displayOmschrijving, String titel, String omschrijving, String doelgroep,
+			List<String> kernwoorden, LocalDate beschikbaarVan, LocalDate beschikbaarTot, String locatie, SoortOnderdeel soort){
+		switch(soort){
+		case DOCUMENT : return new Document(displayNaam, displayOmschrijving, titel, omschrijving, doelgroep,
+				kernwoorden, beschikbaarVan, beschikbaarTot, locatie);
+		default : return null;
+		}
+	}
+
+}

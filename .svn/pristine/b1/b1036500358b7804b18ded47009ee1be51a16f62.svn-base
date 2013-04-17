@@ -1,0 +1,71 @@
+﻿@model Project2Groep7.Models.Leertraject
+
+@{
+    ViewBag.Title = "View";
+}
+
+
+<fieldset>
+    
+
+    <div class="display-field">
+        <h2> @Html.DisplayFor(model => model.Titel)</h2>     
+    </div>
+
+    <div class="table">
+            <table>
+                <tr>
+                    <td>
+                        begint op :                   
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.BeschikbaarheidVan)                  
+                    </td>
+                </tr>
+                <tr>          
+                    <td>
+                        eindigd op :                   
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.BeschikbaarheidTot)               
+                    </td>  
+                </tr>
+                <tr>          
+                    <td>
+                        gaat door op :                 
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.StartDatum)                
+                    </td>
+                </tr>
+            </table>
+    </div>    
+    
+
+    <p>
+        @Html.DisplayFor(model => model.Omschrijving)
+    </p>
+    
+
+
+</fieldset>
+<div>
+    @if (Model.tblTrajectOnderdelens.Count != 0)
+    {
+        @Html.Partial("_PartialLijstOnderdelen", Model.tblTrajectOnderdelens)
+    }
+    else
+    {
+        <h1>Er zijn geen onderdelen voor dit leertraject</h1>
+    }
+   
+</div>
+
+<p>
+    Deze leertraject is gemaakt voor @Html.DisplayFor(model => model.Doelgroep)            
+      
+</p>
+
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>

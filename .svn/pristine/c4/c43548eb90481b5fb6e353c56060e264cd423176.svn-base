@@ -1,0 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblAntwoordCasu
+    {
+        [Key]
+        public int AntwoordID { get; set; }
+        public string AntwoordTekst { get; set; }
+        public string AntwoordBeschrijving { get; set; }
+        public Nullable<int> VolgendeVraag { get; set; }
+        public int VraagID { get; set; }
+        public virtual tblVraag tblVraag { get; set; }
+        public virtual tblVraag tblVraag1 { get; set; }
+    }
+}

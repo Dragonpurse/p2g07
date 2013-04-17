@@ -1,0 +1,159 @@
+package gui;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
+import net.miginfocom.swing.MigLayout;
+import domein.pattern.observer.Observer;
+
+public class BrowserPane extends JTabbedPane implements ListSelectionListener, DocumentListener, ActionListener{
+	private Observer observer;
+	private JTable table;
+	private TableModel model;
+	private TableRowSorter<TableModel> sorter;
+	private int selection;
+	private String tag;
+	private SearchPanel searchPanel;
+	private JPanel contentPanel;
+	
+	public BrowserPane(String tag, TableModel model, int selection){
+		this.model = model;
+		this.tag = tag;
+		this.selection = selection;
+		initGUI();
+	}
+	private void initGUI() {
+		contentPanel = new JPanel(new MigLayout("wrap","[]","[][fill,grow]"));
+		observer = (Observer) model;
+		table = new JTable(){
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column){
+		        Component returnComp = super.prepareRenderer(renderer, row, column);
+		        Color alternateColor = new Color(232,242,254);
+		        Color whiteColor = Color.WHITE;
+		        if (!returnComp.getBackground().equals(getSelectionBackground())){
+		            Color bg = (row % 2 == 1 ? alternateColor : whiteColor);
+		            returnComp .setBackground(bg);
+		            bg = null;
+		        }
+		        return returnComp;
+		}};
+		table.setShowGrid(false);
+		table.setModel(model);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.setSelectionMode(selection);
+		table.getSelectionModel().addListSelectionListener(this);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+		scrollPane.setViewportView(table);
+		scrollPane.getViewport().setBackground(Color.white);
+		contentPanel.add(scrollPane,"cell 0 1");
+		addTab(tag, contentPanel);
+	}
+	
+	public void addSearchPanel(SearchPanel searchPanel) {
+		this.searchPanel = searchPanel;
+		this.searchPanel.getSearchField().getDocument().addDocumentListener(this);
+		for(JCheckBox cb : this.searchPanel.getCheckboxes()) {
+			cb.addActionListener(this);
+		}
+		contentPanel.add(this.searchPanel,"cell 0 0");
+		this.repaint();
+	}
+	
+	private void searchTable(String search){
+		sorter = new TableRowSorter<TableModel>(model);
+		ArrayList<RowFilter<Object, Object>> filters = new ArrayList<>();
+		if(search.equals("Typ hier om te zoeken"))
+			search = "";
+		RowFilter<Object,Object> searchFilter = RowFilter.regexFilter("(?i)" + Pattern.quote(search));
+		filters.add(searchFilter);
+		for(JCheckBox cb : searchPanel.getCheckboxes()){
+			if(!cb.isSelected()){
+				filters.add(RowFilter.notFilter(RowFilter.regexFilter(cb.getText(), table.getColumnModel().getColumnIndex("Type"))));
+			}
+		}
+		sorter.setRowFilter(RowFilter.andFilter(filters));
+		table.setRowSorter(sorter);		
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent event) {
+		if(event.getValueIsAdjusting())
+			return;	
+		for(int index : table.getSelectedRows()) {
+			if(table.getRowSorter() != null) {
+				observer.update(table.getRowSorter().convertRowIndexToModel(index));
+			} else observer.update(index);
+		}
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		searchTable(searchPanel.getSearchField().getText().trim());
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		searchTable(searchPanel.getSearchField().getText().trim());
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		searchTable(searchPanel.getSearchField().getText().trim());
+		
+	}
+	
+	public JTable getTable() {
+		return table;
+	}
+	public void setTable(JTable table) {
+		this.table = table;
+	}
+	public JPanel getContentPanel() {
+		return contentPanel;
+	}
+	public void setContentPanel(JPanel contentPanel) {
+		this.contentPanel = contentPanel;
+	}
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		if(event.getSource().getClass().getSimpleName().equalsIgnoreCase("JCheckBox"))
+			searchTable("");
+	}
+	
+	public void reselectRow() {
+		if(!table.getSelectionModel().isSelectionEmpty()) {
+			int index = table.getSelectedRow();
+			if(table.getRowSorter() != null) {
+				observer.update(table.getRowSorter().convertRowIndexToModel(index));
+			} else observer.update(index);
+		}
+	}
+	
+	public void highlightSelectedRows() {
+		if(!table.getSelectionModel().isSelectionEmpty()) {
+			table.setRowSelectionInterval(table.getSelectedRow(), table.getSelectedRows()[table.getSelectedRows().length]);
+		}
+	}
+}
+

@@ -1,0 +1,21 @@
+using System;
+using System.Collections.Generic;
+
+namespace p2g7.Models.Domain
+{
+    public partial class TrajectOnderdeel
+    {
+        public string LeertrajectCode { get; set; }
+        public int OnderdeelID { get; set; }
+        public string Type { get; set; }
+        public string DisplayNaam { get; set; }
+        public string DisplayOmschrijving { get; set; }
+        public System.DateTime BeschikbaarVan { get; set; }
+        public System.DateTime BeschikbaarTot { get; set; }
+        public virtual Casus Casus { get; set; }
+        public virtual Document Document { get; set; }
+        public virtual Doos Doos { get; set; }
+        public virtual Leertraject Leertraject { get; set; }
+        public virtual Stellingspel Stellingspel { get; set; }
+    }
+}

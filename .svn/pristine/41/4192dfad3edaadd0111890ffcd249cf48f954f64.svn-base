@@ -1,0 +1,178 @@
+package gui;
+
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import net.miginfocom.swing.MigLayout;
+
+import com.toedter.calendar.JDateChooser;
+
+import domein.Leertraject;
+import domein.LeertrajectController;
+import domein.pattern.observer.Observer;
+import domein.pattern.observer.Subject;
+
+public class BeheerTrajectPanel extends JPanel implements Subject, Observer, ActionListener{
+	private LeertrajectController lc;
+	private JLabel lblTitel;
+	private JTextField txtTitel;
+	private JLabel lblOmschrijving;
+	private JTextArea txaOmschrijving;
+	private JScrollPane scrOmschrijving;
+	private JLabel lblDoelgroep;
+	private JTextField txtDoelgroep;
+	private JLabel lblLifeDatum;
+	private JDateChooser fieldLifeDatum;
+	private JButton btnNieuwDocument;
+	private JButton btnNieuwCasus;
+	private JButton btnNieuweStellingenspel;
+	private HashSet<Observer> observers;
+	private boolean activeTab = false;
+	private JButton btnBestaandOnderdeel;
+	private JLabel lblWarning;
+	private boolean hasGeselecteerdTraject;;
+
+	public BeheerTrajectPanel(LeertrajectController lc) {
+		this.lc = lc;
+		observers = new HashSet<>();
+		lc.addObserver(this);
+		initGUI();
+		createMigLayout();
+	}
+
+	private void createMigLayout() {
+		Utility.addSeparator("Beheer van traject", this);
+		add(lblTitel,"right");
+		add(txtTitel,"growx, wrap");
+		add(lblDoelgroep,"right");
+		add(txtDoelgroep,"growx, wrap");
+		add(lblOmschrijving,"right");
+		add(scrOmschrijving,"growx, h 210, wrap,");
+		add(lblLifeDatum,"right");
+		add(fieldLifeDatum,"growx, wrap");
+		add(btnBestaandOnderdeel,"spanx,gaptop 8, tag,center,split 4");
+		add(btnNieuwDocument,"spanx,gaptop 8, tag,center");
+		add(btnNieuwCasus,"spanx,gaptop 8, tag ,center");
+		add(btnNieuweStellingenspel,"spanx,gaptop 8, tag,center,wrap");
+		add(lblWarning,"spanx,center");
+	}
+
+	private void initGUI() {
+		setLayout(new MigLayout("","[][grow,::600][]"));
+		setBackground(new Color(250,250,250));
+		setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+	
+		{
+			lblTitel = new JLabel("Titel :");
+			txtTitel = new JTextField();
+			txtTitel.setEnabled(false);
+		}
+		{
+			lblDoelgroep = new JLabel("Doelgroep :");
+			txtDoelgroep = new JTextField();
+			txtDoelgroep.setEnabled(false);
+		}
+		{
+			lblOmschrijving = new JLabel("Omschrijving :");
+			txaOmschrijving = new JTextArea();
+			txaOmschrijving.setLineWrap(true);
+			txaOmschrijving.setWrapStyleWord(true);
+			scrOmschrijving = new JScrollPane(txaOmschrijving);
+			scrOmschrijving.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			txaOmschrijving.setEnabled(false);
+		}
+		{
+			lblLifeDatum = new JLabel("Life datum :");
+			fieldLifeDatum = new JDateChooser();
+			fieldLifeDatum.getCalendarButton().setFocusCycleRoot(false);
+			fieldLifeDatum.setDateFormatString("dd/MM/yyyy");
+			fieldLifeDatum.setEnabled(false);
+		}
+		{
+			btnBestaandOnderdeel = new JButton("Bestaand onderdeel");
+			btnBestaandOnderdeel.addActionListener(this);
+		}
+		{
+			btnNieuwDocument = new JButton("Nieuw document");
+			btnNieuwDocument.addActionListener(this);
+		}
+		{
+			btnNieuwCasus = new JButton("Nieuwe casus");
+			btnNieuwCasus.addActionListener(this);
+		}
+		{
+			btnNieuweStellingenspel = new JButton("Nieuw stellingenspel");
+			btnNieuweStellingenspel.addActionListener(this);
+		}
+		{
+			lblWarning = new JLabel();
+			lblWarning.setForeground(Color.red);
+		}
+	}
+	
+	public void updateFields(Leertraject lt){
+		txtTitel.setText(lt.getTitel());
+		txaOmschrijving.setText(lt.getOmschrijving());
+		txtDoelgroep.setText(lt.getDoelgroep());
+		fieldLifeDatum.setDate(lt.getStartdatum().toDate());
+		hasGeselecteerdTraject = true;
+		lblWarning.setText("");
+	}
+
+
+	@Override
+	public void update(Object object) {
+		if(object instanceof Leertraject && activeTab) {
+			updateFields((Leertraject) object);
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(!hasGeselecteerdTraject) {
+			lblWarning.setText("Gelieve een leertraject te selecteren");
+			return;
+		}	
+		if(e.getSource().equals(btnNieuwDocument))
+			notifyObservers("Document");
+		if(e.getSource().equals(btnNieuwCasus))
+			notifyObservers("Casus");
+		if(e.getSource().equals(btnNieuweStellingenspel))
+			notifyObservers("Stellingenspel");
+		if(e.getSource().equals(btnBestaandOnderdeel)) {
+			notifyObservers("Bestaand");
+		}
+	}
+
+	@Override
+	public void addObserver(Observer o) {
+		observers.add(o);
+		
+	}
+
+	@Override
+	public void notifyObservers(Object object) {
+		for(Observer o : observers)
+			o.update(object);
+	}
+
+	public boolean isActiveTab() {
+		return activeTab;
+	}
+
+	public void setActiveTab(boolean activeTab) {
+		this.activeTab = activeTab;
+	}
+
+}

@@ -1,0 +1,12 @@
+package persistentie;
+
+import java.util.ArrayList;
+
+import domein.Leertraject;
+
+public class LeertrajectMapper {
+
+	public ArrayList<Leertraject> geefLijstleertrajecten() {
+		throw new UnsupportedOperationException();
+	}
+}

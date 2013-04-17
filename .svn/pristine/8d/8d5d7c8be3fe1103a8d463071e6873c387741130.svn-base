@@ -1,0 +1,443 @@
+package persistentie;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.joda.time.LocalDate;
+
+import domein.Casus;
+import domein.CasusVraag;
+import domein.Document;
+import domein.Doos;
+import domein.Onderdeel;
+import domein.SoortOnderdeel;
+import domein.Stellingspel;
+
+public class OnderdeelMapper extends Mapper<Onderdeel>{
+
+	private List<Onderdeel> oLijst;
+	private DbConnectie dbCon;
+	private String sqlQuery;
+	private Connection con;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	private List<String> kernwoorden = new ArrayList<String>();
+	private Map<String,List<String>> stellingen = new HashMap<String,List<String>>();
+	
+	public OnderdeelMapper(){
+		dbCon = new DbConnectie();
+	}
+	
+	@Override
+	public List<Onderdeel> geefLijst() {
+		oLijst = new ArrayList<>();
+		dbCon.openConnection();
+	    try {
+	    	geefDocumenten();
+	    	geefStellingspellen();
+	    	geefCasussen();
+	    	geefDozen();   
+	    } catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			dbCon.closeConnection();
+		}
+		return oLijst;
+	}
+	
+	@Override
+	public List<Onderdeel> geefLijstPerItem(String ltCode) {
+		oLijst = new ArrayList<>();
+		dbCon.openConnection();
+		try {
+			sqlQuery = "SELECT * FROM tblTrajectOnderdelen WHERE LeertrajectCode = '" + ltCode + "'";
+			con = dbCon.getConn();
+			pstmt = con.prepareStatement(sqlQuery);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				String type = rs.getString("Type");
+				
+				switch(type){
+				case "Document": 
+				geefDocumentenPerItem();	
+				break;
+				case "Stellingspel": 
+				geefStellingspellenPerItem();
+				break; 
+				case "Casus": 
+				geefCasussenPerItem();
+				break; 
+				case "Doos": 
+				geefDozenPerItem();
+				break; 
+				default : break;
+				}
+			}
+		    pstmt.close();
+		    rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			dbCon.closeConnection();
+		}
+		
+	return oLijst;
+	}
+
+	// Voeg nieuw onderdeel toe zonder link
+	@Override
+	public void voegItemToe(Onderdeel onderdeel) {
+		dbCon.openConnection();
+		try {
+			String type = onderdeel.getType().toString();
+			switch(type) {
+			case "Document" :
+			voegDocumentToe(onderdeel); 
+			break;
+			case "Stellingspel" : 
+			voegStellingspelToe(onderdeel); 
+			break;
+			case "Casus":   
+			voegCasusToe(onderdeel); 
+			break;
+			case "Doos": 
+			voegDoosToe(onderdeel); 
+			break;
+			default: break;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			dbCon.closeConnection();
+		}
+	}
+	
+	// Link onderdeel met traject
+	@Override
+	public void voegItemToe(String leertrajectCode, Onderdeel onderdeel) {
+		dbCon.openConnection();
+		try {
+			sqlQuery = "INSERT INTO tblTrajectOnderdelen VALUES ('"+leertrajectCode+"','"+onderdeel.getID()+"','"+onderdeel.getType().toString()+"','"+onderdeel.getDisplayNaam()
+					        + "','"+onderdeel.getDisplayOmschrijving()+"','"+onderdeel.getBeschikbaarVan()+"','"+onderdeel.getBeschikbaarTot()+"')";
+			con = dbCon.getConn();
+			pstmt = con.prepareStatement(sqlQuery);
+			pstmt.executeUpdate();			
+			pstmt.close();
+		
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally{
+			dbCon.closeConnection();
+		}
+	}
+
+	@Override
+	public void verwijderItem(String ltCode, Onderdeel onderdeel) {	
+		dbCon.openConnection();
+		try {
+			sqlQuery = "DELETE FROM tblTrajectOnderdelen WHERE LeertrajectCode = '"+ltCode+"' AND OnderdeelID = '"+onderdeel.getID()
+					  +"' AND Type = '"+onderdeel.getType().toString()+"'";
+			con = dbCon.getConn();
+			pstmt = con.prepareStatement(sqlQuery);
+			pstmt.executeUpdate();			
+			pstmt.close();
+		} catch (SQLException e) {
+            e.printStackTrace(); 
+		} finally{
+			dbCon.closeConnection();
+		}
+	}
+	
+	//4 private methodes voor geefLijst
+	private void geefDocumenten() throws SQLException
+	{
+		sqlQuery = "SELECT * FROM tblDocument";
+		con = dbCon.getConn();
+		pstmt = con.prepareStatement(sqlQuery);
+		rs = pstmt.executeQuery();
+		
+		while(rs.next()){
+			Document doc = new Document();
+			doc.setTitel(rs.getString("Titel"));
+			doc.setOmschrijving(rs.getString("Omschrijving"));
+			String sqlQuery2 = "SELECT * FROM tblKernwoord k join tblOnderdeelKernwoorden o on k.KernwoordID = o.KernwoordID join tblDocument d on o.OnderdeelID = d.DocumentID";
+			PreparedStatement pstmt2 = con.prepareStatement(sqlQuery2);
+			ResultSet rs2 = pstmt2.executeQuery();
+			while(rs2.next()){
+				kernwoorden.add(rs2.getString("Naam"));
+			}
+			doc.setKernwoorden(kernwoorden);
+			doc.setDoelgroep(rs.getString("Doelgroep"));
+			doc.setLocatieDocument(rs.getString("Locatie"));
+			doc.setID(rs.getInt("DocumentID"));
+			doc.setType(SoortOnderdeel.DOCUMENT);
+			oLijst.add(doc);
+		}
+	    pstmt.close();
+	    rs.close();
+	}
+	
+	private void geefStellingspellen() throws SQLException
+	{
+		 	sqlQuery = "SELECT * FROM tblStellingspel";
+			con = dbCon.getConn();
+			pstmt = con.prepareStatement(sqlQuery);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				Stellingspel spel = new Stellingspel();
+				spel.setTitel(rs.getString("Titel"));
+				spel.setOmschrijving(rs.getString("Omschrijving"));
+				String sqlQuery2 = "SELECT * FROM tblKernwoord k join tblOnderdeelKernwoorden o on k.KernwoordID = o.KernwoordID join tblStellingspel s on o.OnderdeelID = s.StellingspelID";
+				PreparedStatement pstmt2 = con.prepareStatement(sqlQuery2);
+				ResultSet rs2 = pstmt2.executeQuery();
+				while(rs2.next()){
+					kernwoorden.add(rs2.getString("Naam"));
+				}
+				spel.setKernwoorden(kernwoorden);
+				spel.setDoelgroep(rs.getString("Doelgroep"));
+				//TODO Stellingen
+				spel.setStellingen(stellingen);
+				spel.setID(rs.getInt("StellingspelID"));
+				spel.setType(SoortOnderdeel.STELLINGSPEL);
+				oLijst.add(spel);
+			}
+		    pstmt.close();
+		    rs.close();
+	}
+	
+	private void geefCasussen() throws SQLException
+	{
+		sqlQuery = "SELECT * FROM tblCasus";
+		con = dbCon.getConn();
+		pstmt = con.prepareStatement(sqlQuery);
+		rs = pstmt.executeQuery();
+		
+		while(rs.next()){
+			Casus cas = new Casus();
+			cas.setTitel(rs.getString("Titel"));
+			cas.setOmschrijving(rs.getString("Omschrijving"));
+			String sqlQuery2 = "SELECT * FROM tblKernwoord k join tblOnderdeelKernwoorden o on k.KernwoordID = o.KernwoordID join tblCasus c on o.OnderdeelID = c.CasusID";
+			PreparedStatement pstmt2 = con.prepareStatement(sqlQuery2);
+			ResultSet rs2 = pstmt2.executeQuery();
+			while(rs2.next()){
+				kernwoorden.add(rs2.getString("Naam"));
+			}
+			cas.setKernwoorden(kernwoorden);
+			cas.setDoelgroep(rs.getString("Doelgroep"));
+			cas.setSituatieschets(rs.getString("Situatieschets"));
+			cas.setLocatieIntro(rs.getString("LocatieFilm"));
+			//TODO CasusRoot
+			cas.setCasusRoot(new CasusVraag(rs.getString("EersteVraag")));
+			cas.setID(rs.getInt("CasusID"));
+			cas.setType(SoortOnderdeel.CASUS);
+			oLijst.add(cas);
+		}
+	    pstmt.close();
+	    rs.close();
+	}
+	
+	private void geefDozen() throws SQLException
+	{
+		sqlQuery = "SELECT * FROM tblDoos";
+		con = dbCon.getConn();
+		pstmt = con.prepareStatement(sqlQuery);
+		rs = pstmt.executeQuery();
+		
+		while(rs.next()){
+			Doos doos = new Doos();
+			doos.setTitel(rs.getString("Titel"));
+			doos.setOmschrijving(rs.getString("Omschrijving"));
+			String sqlQuery2 = "SELECT * FROM tblKernwoord k join tblOnderdeelKernwoorden o on k.KernwoordID = o.KernwoordID join tblDoos d on o.OnderdeelID = d.DoosID";
+			PreparedStatement pstmt2 = con.prepareStatement(sqlQuery2);
+			ResultSet rs2 = pstmt2.executeQuery();
+			while(rs2.next()){
+				kernwoorden.add(rs2.getString("Naam"));
+			}
+			doos.setKernwoorden(kernwoorden);
+			doos.setDoelgroep(rs.getString("Doelgroep"));
+			//TODO Vragen
+			doos.setVragen(new ArrayList<String>());
+			doos.setID(rs.getInt("DoosID"));
+			doos.setType(SoortOnderdeel.DOOS);
+			oLijst.add(doos);
+		}
+	    pstmt.close();
+	    rs.close();
+	}
+	
+	//4 private methodes voor geefLijstPerItem
+	private void geefDocumentenPerItem() throws SQLException
+	{
+		sqlQuery = "SELECT * FROM tblDocument WHERE DocumentID ='"+rs.getInt("OnderdeelID")+"'";
+		pstmt = con.prepareStatement(sqlQuery);
+		rs = pstmt.executeQuery();
+		
+		if(rs.next()){
+			Document doc = new Document();
+			doc.setTitel(rs.getString("Titel"));
+			doc.setOmschrijving(rs.getString("Omschrijving"));
+			// TODO Kernwoorden
+			doc.setKernwoorden(new ArrayList<String>());
+			doc.setDoelgroep(rs.getString("Doelgroep"));
+			doc.setLocatieDocument(rs.getString("Locatie"));
+			doc.setDisplayNaam(rs.getString("displayNaam"));
+			doc.setID(rs.getInt("OnderdeelID"));
+			doc.setDisplayOmschrijving(rs.getString("DisplayOmschrijving"));
+			doc.setDisplayNaam(rs.getString("DisplayNaam"));
+			doc.setBeschikbaarVan(LocalDate.fromDateFields(rs.getDate("BeschikbaarVan")));
+			doc.setBeschikbaarTot(LocalDate.fromDateFields(rs.getDate("BeschikbaarTot")));
+			oLijst.add(doc);}
+	    rs.close();
+	}
+	
+	private void geefStellingspellenPerItem() throws SQLException
+	{
+		sqlQuery = "SELECT * FROM tblStellingspel WHERE StellingspelID ='"+rs.getInt("OnderdeelID")+"'";
+    	pstmt = con.prepareStatement(sqlQuery);
+    	rs = pstmt.executeQuery();
+    	
+    	if(rs.next()){
+			Stellingspel spel = new Stellingspel();
+			spel.setTitel(rs.getString("Titel"));
+			spel.setOmschrijving(rs.getString("Omschrijving"));
+			//TODO Kernwoorden
+			spel.setKernwoorden(new ArrayList<String>());
+			spel.setDoelgroep(rs.getString("Doelgroep"));
+			//TODO Stellingen
+			spel.setStellingen(new HashMap<String,List<String>>());
+			spel.setDisplayNaam(rs.getString("displayNaam"));
+			spel.setID(rs.getInt("OnderdeelID"));
+			spel.setDisplayOmschrijving(rs.getString("DisplayOmschrijving"));
+			spel.setDisplayNaam(rs.getString("DisplayNaam"));
+			spel.setBeschikbaarVan(LocalDate.fromDateFields(rs.getDate("BeschikbaarVan")));
+			spel.setBeschikbaarTot(LocalDate.fromDateFields(rs.getDate("BeschikbaarTot")));
+			oLijst.add(spel);}
+		rs.close();
+	}
+	
+	private void geefCasussenPerItem() throws SQLException
+	{
+		sqlQuery = "SELECT * FROM tblCasus WHERE CasusID ='"+rs.getInt("OnderdeelID")+"'";
+    	pstmt = con.prepareStatement(sqlQuery);
+    	rs = pstmt.executeQuery();
+    	
+    	if(rs.next()){
+			Casus cas = new Casus();
+			cas.setTitel(rs.getString("Titel"));
+			cas.setOmschrijving(rs.getString("Omschrijving"));
+			//TODO Kernwoorden
+			cas.setKernwoorden(new ArrayList<String>());
+			cas.setDoelgroep(rs.getString("Doelgroep"));
+			cas.setSituatieschets(rs.getString("Situatieschets"));
+			cas.setLocatieIntro(rs.getString("LocatieFilm"));
+			//TODO CasusRoot
+			cas.setCasusRoot(new CasusVraag("EersteVraag"));
+			cas.setDisplayNaam(rs.getString("displayNaam"));
+			cas.setID(rs.getInt("OnderdeelID"));
+			cas.setDisplayOmschrijving(rs.getString("DisplayOmschrijving"));
+			cas.setDisplayNaam(rs.getString("DisplayNaam"));
+			cas.setBeschikbaarVan(LocalDate.fromDateFields(rs.getDate("BeschikbaarVan")));
+			cas.setBeschikbaarTot(LocalDate.fromDateFields(rs.getDate("BeschikbaarTot")));
+			oLijst.add(cas);}
+		rs.close();
+	}
+	
+	private void geefDozenPerItem() throws SQLException
+	{
+		sqlQuery = "SELECT * FROM tblDoos WHERE DoosID ='"+rs.getInt("OnderdeelID")+"'";
+    	pstmt = con.prepareStatement(sqlQuery);
+    	rs = pstmt.executeQuery();
+    	
+    	if(rs.next()){
+			Doos doos = new Doos();
+			doos.setTitel(rs.getString("Titel"));
+			doos.setOmschrijving(rs.getString("Omschrijving"));
+			//TODO Kernwoorden
+			doos.setKernwoorden(new ArrayList<String>());
+			doos.setDoelgroep(rs.getString("Doelgroep"));
+			//TODO Vragen
+			doos.setVragen(new ArrayList<String>());
+			doos.setDisplayNaam(rs.getString("displayNaam"));
+			doos.setID(rs.getInt("OnderdeelID"));
+			doos.setDisplayOmschrijving(rs.getString("DisplayOmschrijving"));
+			doos.setDisplayNaam(rs.getString("DisplayNaam"));
+			doos.setBeschikbaarVan(LocalDate.fromDateFields(rs.getDate("BeschikbaarVan")));
+			doos.setBeschikbaarTot(LocalDate.fromDateFields(rs.getDate("BeschikbaarTot")));
+			oLijst.add(doos);}
+		rs.close();
+	}
+	
+	//4 private methodes voor voegItemToe
+	private void voegDocumentToe(Onderdeel onderdeel) throws SQLException
+	{
+		  Document doc = (Document) onderdeel;
+		  sqlQuery = "INSERT INTO tblDocument VALUES ('"+doc.getTitel()+"','"+doc.getOmschrijving()+"','"+doc.getLocatie()+"','"+doc.getDoelgroep()+"')";
+		  con = dbCon.getConn();
+		  pstmt = con.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+		  pstmt.executeUpdate();
+		  rs = pstmt.getGeneratedKeys();
+		  if(rs.next())
+			  onderdeel.setID(rs.getInt(1));
+		  //TODO Kernwoorden
+		  rs.close();
+		  pstmt.close();
+	}
+	
+	private void voegStellingspelToe(Onderdeel onderdeel) throws SQLException
+	{
+		  Stellingspel spel = (Stellingspel) onderdeel;
+	      sqlQuery = "INSERT INTO tblStellingspel VALUES ('"+spel.getTitel()+"','"+spel.getOmschrijving()+"','"+spel.getDoelgroep()+"')";
+		  con = dbCon.getConn();
+		  pstmt = con.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+		  pstmt.executeUpdate();
+		  rs = pstmt.getGeneratedKeys();
+		  if(rs.next())
+			  onderdeel.setID(rs.getInt(1));
+		  //TODO Kernwoorden
+		  //TODO Stellingen
+		  rs.close();
+		  pstmt.close();
+	}
+	
+	private void voegCasusToe(Onderdeel onderdeel) throws SQLException
+	{
+		Casus cas = (Casus) onderdeel;
+		sqlQuery = "INSERT INTO tblCasus VALUES ('"+cas.getTitel()+"','"+cas.getOmschrijving()+"','"+cas.getLocatieIntro()+"','"+cas.getDoelgroep()+"','"+cas.getSituatieschets()+"')";
+		con = dbCon.getConn();
+		pstmt = con.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+		pstmt.executeUpdate();
+		rs = pstmt.getGeneratedKeys();
+		if(rs.next())
+			onderdeel.setID(rs.getInt(1));
+		//TODO Kernwoorden
+		//TODO CasusRoot
+		rs.close();
+		pstmt.close();
+	}
+	
+	private void voegDoosToe(Onderdeel onderdeel) throws SQLException
+	{
+		 Doos doos = (Doos) onderdeel;
+		 sqlQuery = "INSERT INTO tblDoos VALUES ('"+doos.getTitel()+"','"+doos.getOmschrijving()+"','"+doos.getDoelgroep()+"')";
+		 con = dbCon.getConn();
+		 pstmt = con.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+		 pstmt.executeUpdate();
+		 rs = pstmt.getGeneratedKeys();
+		 if(rs.next())
+			 onderdeel.setID(rs.getInt(1));
+		 //TODO Kernwoorden
+		 //TODO Vragen
+		 rs.close();
+		 pstmt.close();
+	}
+}

@@ -1,0 +1,16 @@
+package domein;
+
+import java.util.Date;
+import java.util.*;
+
+public class Leertraject {
+
+	private String code;
+	private String titel;
+	private String omschrijving;
+	private Date startdatum;
+	private String doelgroep;
+	private Date beschikbaarheidVan;
+	private Date beschikbaarheidTot;
+	private String medewerkerExtern;
+}

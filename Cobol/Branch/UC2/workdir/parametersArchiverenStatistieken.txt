@@ -1,0 +1,7 @@
+jdbc:sqlserver://localhost\SQLEXPRESS;databaseName=p2g7;userName=admin;password=admin
+T001
+rapport
+T002
+databank
+T003
+beide

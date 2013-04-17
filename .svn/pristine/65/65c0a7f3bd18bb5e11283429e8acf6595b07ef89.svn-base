@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Project2Groep7.Models;
+using MvcContrib.Pagination;
+
+
+namespace Project2Groep7.Controllers
+{
+    [Authorize]
+    public class OnderdeelController : Controller
+    {
+        private readonly IOnderdeelRepository onderdeelRepository;
+        public IEnumerable<TrajectOnderdeel> trajectOnderdelen { get; set; }
+
+        public OnderdeelController(IOnderdeelRepository onderdeelRepository)
+        {
+            this.onderdeelRepository = onderdeelRepository;
+        }
+
+        public ViewResult Index(int onderdeelID, string type)
+        {
+            TrajectOnderdeel onderdeel = onderdeelRepository.FindById(onderdeelID, type);
+            return View(onderdeel);
+        }
+    }
+}
+

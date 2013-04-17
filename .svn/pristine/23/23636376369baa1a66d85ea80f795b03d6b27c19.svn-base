@@ -1,0 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblDocument
+    {
+        public tblDocument()
+        {
+            this.tblTrajectOnderdelens = new List<TrajectOnderdelen>();
+        }
+
+        [Key]
+        public int DocumentID { get; set; }
+        public string Titel { get; set; }
+        public string Omschrijving { get; set; }
+        public string Locatie { get; set; }
+        public string Doelgroep { get; set; }
+        public string Kernwoorden { get; set; }
+        public virtual ICollection<TrajectOnderdelen> tblTrajectOnderdelens { get; set; }
+    }
+}

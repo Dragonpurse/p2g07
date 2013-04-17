@@ -1,0 +1,10 @@
+package domein;
+
+import java.util.List;
+
+public class Doos extends Onderdeel {
+
+	public Doos(String displayNaam, String displayOmschrijving, String titel,String omschrijving, List<String> kernwoorden, String doelgroep) {
+		super(displayNaam, displayOmschrijving, titel, omschrijving, kernwoorden,doelgroep, "DOOS");
+	}
+}

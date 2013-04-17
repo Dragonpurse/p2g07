@@ -1,0 +1,150 @@
+000100 IDENTIFICATION DIVISION.
+000200 PROGRAM-ID. Registratie_deelnemers.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.      
+       FILE-CONTROL.
+       SELECT parameterInvoer 
+       ASSIGN TO "parameters.txt"
+       ORGANIZATION LINE SEQUENTIAL
+       FILE STATUS IS parameter-status.
+       
+       SELECT deelnemersBestand 
+       ASSIGN TO naamDeelnemersBestand
+       ORGANIZATION LINE SEQUENTIAL.
+       
+       SELECT nieuwDeelnemersBestand 
+       ASSIGN TO naamNieuwDeelnemersBestand
+       ORGANIZATION LINE SEQUENTIAL.
+       
+       DATA DIVISION.
+       FILE SECTION.
+       FD parameterInvoer.
+       COPY "parameterInvoer.cpy".
+       
+       FD deelnemersBestand.
+       COPY "deelnemersBestand.cpy".
+       
+       FD nieuwDeelnemersBestand.
+       COPY "nieuwDeelnemersBestand.cpy".
+       WORKING-STORAGE SECTION.
+       
+       01 projectRecord.
+           02 projectCode                       PIC 9(5) VALUE SPACES.
+           02 naamDeelnemersBestand             PIC X(50) VALUE SPACES.
+           02 naamNieuwDeelnemersBestand        PIC X(50) VALUE SPACES.
+       
+       01 deelnemer.
+           02 naam                              PIC X(30) VALUE SPACES.
+           02 paswoord                          PIC X(30) VALUE SPACES.
+       01 lengtePaswoord                        PIC 99.
+       01 aantalHoofdletters                    PIC 99.
+       01 aantalCijfers                         PIC 99.
+           
+       01 JdbcString                            PIC X(100) VALUE SPACES.
+       01 Statuscodes.
+           02 parameter-status.
+               05 parameter-status-key1         PIC X.
+               05 parameter-status-key2         PIC X.
+               05 binary-parameter-status 
+               REDEFINES parameter-status-key2  PIC 99.
+           02 deelnemer-status.
+               05 deelnemer-status-key1         PIC X.
+               05 deelnemer-status-key2         PIC X.
+               05 binary-deelnemer-status
+               REDEFINES deelnemer-status-key2  PIC 99.
+
+               
+       PROCEDURE DIVISION.
+       
+       pgm.
+           OPEN INPUT parameterInvoer
+           EVALUATE parameter-status-key1
+               WHEN "3" PERFORM 2000-check-perm-err-parameter
+           END-EVALUATE
+           READ parameterInvoer
+               AT END SET eof IN parameterRecord to TRUE
+                      CALL "LogHandler" USING "Parameterfile is empty."
+                      STOP RUN
+           END-READ
+           MOVE parameterLijn TO JdbcString
+           DISPLAY JdbcString
+           
+           READ parameterInvoer
+               AT END SET eof IN parameterRecord to TRUE
+           END-READ
+           
+           PERFORM UNTIL eof IN parameterRecord
+           
+      * EVALUEER PROJECTCODE 3B, 3C.    
+
+               MOVE parameterLijn to projectCode
+               
+               READ parameterInvoer
+                   AT END SET eof IN parameterRecord to TRUE
+               END-READ
+               
+               MOVE parameterLijn to naamDeelnemersBestand
+               DISPLAY naamDeelnemersBestand
+               
+               PERFORM 1000-Verwerking-usersbestand
+               
+               READ parameterInvoer
+                   AT END SET eof IN parameterRecord to TRUE
+               END-READ
+               
+
+
+           END-PERFORM
+           
+           ACCEPT naam.
+
+       .
+       
+       1000-Verwerking-usersbestand.
+           OPEN INPUT deelnemersBestand
+           EVALUATE deelnemer-status-key1
+              WHEN "3" PERFORM 3000-check-perm-err-deelnemer
+           END-EVALUATE
+           READ deelnemersBestand
+              AT END SET eof IN deelnemersRecord TO TRUE
+           END-READ
+           
+           STRING naamDeelnemersBestand DELIMITED BY "."
+                  ".OUT.csv"                DELIMITED BY SIZE
+           INTO naamNieuwDeelnemersBestand
+           OPEN OUTPUT nieuwDeelnemersBestand
+           
+           PERFORM UNTIL eof IN deelnemersRecord
+               MOVE deelnemersLijn TO naam
+               READ deelnemersBestand
+                   AT END SET eof IN deelnemersRecord TO TRUE
+               END-READ
+               CALL 'PWGenerator' RETURNING paswoord
+               PERFORM 4000-paswoordEvaluatie
+               STRING naam,";", paswoord DELIMITED BY SPACES 
+               INTO nieuwDeelnemersLijn
+               WRITE nieuwDeelnemersRecord
+           END-PERFORM
+       .
+       
+       2000-check-perm-err-parameter.
+       EVALUATE parameter-status-key2
+           WHEN "5" CALL "LogHandler" USING "Parameterfile not found."
+                    STOP RUN
+       END-EVALUATE
+       .
+       
+       3000-check-perm-err-deelnemer.
+       EVALUATE deelnemer-status-key2
+           WHEN "5" CALL "LogHandler" 
+              USING "deelnemerFile " naamDeelnemersBestand " not found."
+                    STOP RUN
+       END-EVALUATE
+       .
+       
+       4000-paswoordEvaluatie.
+
+
+       .
+
+       

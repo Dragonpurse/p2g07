@@ -1,0 +1,22 @@
+import gui.MainFrame;
+
+import java.util.*;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import org.joda.time.LocalDate;
+import domein.Document;
+import domein.Leertraject;
+import domein.LeertrajectController;
+import domein.LeertrajectManager;
+import domein.Onderdeel;
+
+
+public class StartUp {
+
+	public static void main(String[] args) {
+		JFrame mainFrame = new MainFrame(new LeertrajectController());
+		mainFrame.setVisible(true);
+	}
+}

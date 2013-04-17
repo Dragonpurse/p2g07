@@ -1,0 +1,114 @@
+package domein;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.table.TableModel;
+
+import domein.pattern.observer.Observer;
+import domein.tableModel.SoortTableModel;
+
+
+public class LeertrajectController implements Controller {
+	private Manager manager;
+	private Leertraject geselecteerdLeertraject;
+	private List<Onderdeel> geselecteerdOnderdelen;
+	private Set<Observer> observers;
+	
+	public LeertrajectController(){
+		setManager(new Manager());
+		observers = new HashSet<>();
+	}
+	
+	//Constructor voor testen
+	public LeertrajectController(Manager manager){
+		setManager(manager);
+	}
+	
+	public void voegLeertrajectToe(Leertraject leertraject){
+		setGeselecteerdLeertraject(leertraject);
+		manager.save(leertraject);
+		notifyObservers(geselecteerdLeertraject);
+		notifyObservers("tableChanged");
+	}
+	
+	public void verwijderOnderdeel(Onderdeel onderdeel) {
+		geselecteerdLeertraject.verwijderOnderdeel(onderdeel);
+	}
+	
+	public void linkOnderdeel(Onderdeel onderdeel){
+		geselecteerdLeertraject.linkOnderdeel(onderdeel);
+	}
+	
+	public void save(Object o){
+		if(o instanceof Leertraject)
+			((Leertraject) o).setOnderdelenLijst(geselecteerdOnderdelen);
+		manager.save(o);
+	}
+	
+	public boolean logIn(String naam, String paswoord){
+		return manager.logIn(naam, paswoord);
+	}
+	
+	public void voegExterneMedewerkerToe(Medewerker medewerker) {
+		manager.voegExterneMedewerkerToe(medewerker);
+		notifyObservers(medewerker);
+	}
+	
+	// TableModel methodes
+	
+	public TableModel geefTableModel(SoortTableModel soort){
+		return TableModelFactory.createTableModel(soort, this);
+	}
+	
+	// Observer & Subject methodes
+	
+	@Override
+	public void addObserver(Observer o) {
+		observers.add(o);
+	}	
+	
+	@Override
+	public void notifyObservers(Object object) {
+		for(Observer o : observers)
+			o.update(object);
+	}
+
+	@Override
+	public void update(Object object) {
+		if(object instanceof Leertraject) {
+			geselecteerdLeertraject = (Leertraject) object;
+			notifyObservers(object);
+		} 
+		if(object instanceof Onderdeel) {
+			//geselecteerdOnderdeel = (Onderdeel) object;
+		}
+	}
+	
+	// Getters & setters
+	public Leertraject getGeselecteerdLeertraject() {
+		return geselecteerdLeertraject;
+	}
+
+	public void setGeselecteerdLeertraject(Leertraject geselecteerdLeertraject) {
+		this.geselecteerdLeertraject = geselecteerdLeertraject;
+	}
+
+	public Manager getManager() {
+		return manager;
+	}
+
+	public void setManager(Manager manager) {
+		this.manager = manager;
+	}
+
+	public List<Onderdeel> getGeselecteerdOnderdelen() {
+		return geselecteerdOnderdelen;
+	}
+
+	public void setGeselecteerdOnderdelen(List<Onderdeel> geselecteerdOnderdelen) {
+		this.geselecteerdOnderdelen = geselecteerdOnderdelen;
+	}
+	
+}

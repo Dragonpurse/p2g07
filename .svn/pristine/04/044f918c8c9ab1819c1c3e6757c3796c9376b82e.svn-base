@@ -1,0 +1,51 @@
+package domein.tableModel;
+
+import javax.swing.table.AbstractTableModel;
+
+import domein.Controller;
+import domein.Leertraject;
+import domein.LeertrajectController;
+import domein.LeertrajectManager;
+
+public class LeertrajectActorTableModel extends AbstractTableModel {
+	
+	private static final long serialVersionUID = 1L;
+	private LeertrajectController controller;
+	private LeertrajectManager lm;
+	private final String KOLOMNAMEN[] = {"Code", "Titel", "Omschrijving", "Startdatum"};
+
+
+	public LeertrajectActorTableModel(Controller controller) {
+		controller = (LeertrajectController) controller;
+		lm = this.controller.getLeertrajectManager();
+	}
+
+	@Override
+	public int getRowCount() {
+		return lm.geefAantalLeertrajectenPerActor();
+	}
+
+	@Override
+	public int getColumnCount() {
+		return KOLOMNAMEN.length;
+	}
+	
+	@Override
+	public String getColumnName(int kolom)
+	{
+		return KOLOMNAMEN[kolom];
+	}
+
+	@Override
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		Leertraject lt = lm.geefLeertrajectVanActor(rowIndex);
+		switch (columnIndex) {
+		case 0 : return lt.getLeertrajectCode();
+		case 1 : return lt.getTitel();
+		case 2 : return lt.getOmschrijving();
+		case 3 : return lt.getStartdatum();
+		default: return "";
+		}
+	}
+
+}

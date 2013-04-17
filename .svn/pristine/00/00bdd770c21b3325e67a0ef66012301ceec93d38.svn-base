@@ -1,0 +1,73 @@
+package domein;
+
+import java.util.*;
+
+public class LeertrajectController implements Controller {
+
+	//private Collection<Leertraject> leerTrajecten;
+	@SuppressWarnings("unused")
+	private LeertrajectRepository leertrajectRepository;
+	private Leertraject geselecteerdLeertraject;
+	
+	
+	public LeertrajectController(LeertrajectRepository leertrajectRepository){
+		this.leertrajectRepository = leertrajectRepository;
+	}
+
+	public void aanmakenLeertraject(String leertrajectCode, String titel,
+			String omschrijving, Calendar startDatum, String doelgroep,
+			Calendar beschikbaarheidVan, Calendar beschikbaarheidTot,
+			String externeMedewerker) {	
+		setGeselecteerdLeertraject(new Leertraject(leertrajectCode, titel, omschrijving, startDatum, doelgroep, beschikbaarheidVan, beschikbaarheidTot, externeMedewerker));
+	}
+
+	public void kopieerLeertraject(String leertrajectCode, String titel,
+			String omschrijving, Calendar startDatum, String doelgroep,
+			Calendar beschikbaarheidVan, Calendar beschikbaarheidTot,
+			String externeMedewerker) {
+		
+		if(geselecteerdLeertraject.getLeertrajectCode().equalsIgnoreCase(leertrajectCode))
+			throw new IllegalArgumentException();
+		
+		if(titel == "" || titel == null){
+			titel = geselecteerdLeertraject.getTitel();
+		}
+		
+		if(omschrijving == "" || omschrijving == null){
+			omschrijving = geselecteerdLeertraject.getOmschrijving();
+		}
+		
+		if(doelgroep == "" || doelgroep == null){
+			doelgroep = geselecteerdLeertraject.getDoelgroep();
+		}
+		
+		Collection<Onderdeel> lijst = geselecteerdLeertraject.getLijstOnderdelen();
+		Iterator<Onderdeel> it = lijst.iterator();
+		setGeselecteerdLeertraject(new Leertraject(leertrajectCode, titel, omschrijving, startDatum, doelgroep, beschikbaarheidVan, beschikbaarheidTot, externeMedewerker));
+		while(it.hasNext()){
+			geselecteerdLeertraject.voegOnderdeelToe(it.next());
+		}
+	}
+	
+	public Leertraject getGeselecteerdLeertraject() {
+		return geselecteerdLeertraject;
+	}
+
+	public void setGeselecteerdLeertraject(Leertraject geselecteerdLeertraject) {
+		this.geselecteerdLeertraject = geselecteerdLeertraject;
+	}
+
+	public void voegOnderdeelToe(Onderdeel onderdeel) {
+		geselecteerdLeertraject.voegOnderdeelToe(onderdeel);
+	}
+	
+	public void verwijderOnderdeel(Onderdeel onderdeel) {
+		geselecteerdLeertraject.verwijderOnderdeel(onderdeel);
+	}
+	
+	public ArrayList<Onderdeel> getLijstOnderdelen(){
+		return geselecteerdLeertraject.getLijstOnderdelen();
+	}
+
+
+}

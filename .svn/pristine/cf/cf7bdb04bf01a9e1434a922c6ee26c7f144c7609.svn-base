@@ -1,0 +1,13 @@
+namespace p2g7.Models.Domain
+{
+    public partial class AntwoordCasus
+    {
+        public int AntwoordID { get; set; }
+        public string AntwoordTekst { get; set; }
+        public string AntwoordBeschrijving { get; set; }
+        public int? VolgendeVraag { get; set; }
+        public int VraagID { get; set; }
+        public virtual Vraag Vraag1 { get; set; }
+        public virtual Vraag Vraag2 { get; set; }
+    }
+}

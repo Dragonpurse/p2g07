@@ -1,0 +1,38 @@
+using p2g7.Models.Domain;
+
+namespace p2g7.Models.Mapping
+{
+    public class AntwoordCasusMap : EntityTypeConfiguration<AntwoordCasus>
+    {
+        public AntwoordCasusMap()
+        {
+            // Primary Key
+            this.HasKey(t => t.AntwoordID);
+
+            // Properties
+            this.Property(t => t.AntwoordTekst)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            this.Property(t => t.AntwoordBeschrijving)
+                .HasMaxLength(255);
+
+            // Table & Column Mappings
+            this.ToTable("tblAntwoordCasus");
+            this.Property(t => t.AntwoordID).HasColumnName("AntwoordID");
+            this.Property(t => t.AntwoordTekst).HasColumnName("AntwoordTekst");
+            this.Property(t => t.AntwoordBeschrijving).HasColumnName("AntwoordBeschrijving");
+            this.Property(t => t.VolgendeVraag).HasColumnName("VolgendeVraag");
+            this.Property(t => t.VraagID).HasColumnName("VraagID");
+
+            // Relationships
+            this.HasOptional(t => t.Vraag1)
+                .WithMany(t => t.AntwoordenCasus1)
+                .HasForeignKey(d => d.VolgendeVraag);
+            this.HasRequired(t => t.Vraag2)
+                .WithMany(t => t.AntwoordenCasus2)
+                .HasForeignKey(d => d.VraagID);
+
+        }
+    }
+}

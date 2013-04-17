@@ -1,0 +1,41 @@
+000100 IDENTIFICATION DIVISION.
+000200 PROGRAM-ID. usecase1.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT invoer ASSIGN TO "parameters.txt"
+           ORGANIZATION IS LINE SEQUENTIAL.
+       DATA DIVISION.
+       FILE SECTION.
+       FD invoer.
+       copy parameters.
+       WORKING-STORAGE SECTION.
+       01 info.
+           05 vnaam     PIC X(20).
+           05 fnaam     PIC X(20).
+           05 passw     PIC X(8).
+        01 einde        PIC X.
+         88 einde-bestand value "1".   
+        01 tes          PIC X(255).
+       PROCEDURE DIVISION.
+       PGM.
+           OPEN INPUT invoer
+            READ invoer
+                AT END 
+                 MOVE 1 to einde
+                 MOVE "Het bestand kan niet worden gevonden" to tes
+                 DISPLAY tes
+                 CALL 'LogHandler' USING tes
+                 END-CALL
+            END-READ
+            
+            PERFORM UNTIL einde-bestand
+            READ invoer
+                AT END 
+                 MOVE 1 to einde
+            END-READ
+            END-PERFORM
+           CLOSE invoer
+           ACCEPT EINDE
+           STOP RUN
+       .

@@ -1,0 +1,56 @@
+package domein;
+
+import java.util.*;
+
+public class DomeinController {
+
+	private Collection<Leertraject> leerTrajecten;
+	private Leertraject geselecteerdTraject;
+
+	public void maakTrajectAan(String code, String titel, String omschrijving,
+			Date startdatum, String doelgroep, Date beschikbaarheidVan,
+			Date beschikbaarheidTot, String medewerkerExtern) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void kopieerBestaandTraject() {
+		throw new UnsupportedOperationException();
+	}
+
+	public ArrayList<domein.Leertraject> geefLijstTrajecten() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void toonOverzichtTraject() {
+		throw new UnsupportedOperationException();
+	}
+
+	public Leertraject selecteerLeertraject(String code) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void voegDocumentToe(String titel, String omschrijving,
+			ArrayList<String> kernwoorden, String doelgroep, String locatie) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void voegCasusToe() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void voegStellingspelToe() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void voegDoosToe() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void voegBestaandElementToe() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void verwijderBestaandElement(String titel) {
+		throw new UnsupportedOperationException();
+	}
+}

@@ -1,0 +1,30 @@
+package testen;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import domein.LeertrajectController;
+
+public class UC4Test {
+	
+	private LeertrajectController lc;
+	
+	@Before
+	public void before(){
+		lc = new LeertrajectController();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void geenOnderdelenGevonden() {
+		List<String> types = new ArrayList<String>();
+		types.add("Document");
+		types.add("Stellingspel");
+		lc.zoekOnderdelen("test", types);
+	}
+
+}

@@ -1,0 +1,25 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblStelling
+    {
+        public tblStelling()
+        {
+            this.tblAntwoordStellings = new List<tblAntwoordStelling>();
+        }
+
+        [Key]
+        [Column(Order = 0)]
+        public int StellingspelID { get; set; }
+        public string Stelling { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        public int StellingID { get; set; }
+        public virtual ICollection<tblAntwoordStelling> tblAntwoordStellings { get; set; }
+        public virtual tblStellingspel tblStellingspel { get; set; }
+    }
+}

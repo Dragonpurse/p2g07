@@ -1,0 +1,200 @@
+000100 IDENTIFICATION DIVISION.
+000200 PROGRAM-ID. Registratie_deelnemers.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.      
+       FILE-CONTROL.
+       SELECT parameterInvoer 
+       ASSIGN TO "parameters.txt"
+       ORGANIZATION LINE SEQUENTIAL
+       FILE STATUS IS parameter-status.
+       
+       SELECT deelnemersBestand 
+       ASSIGN TO naamDeelnemersBestand
+       ORGANIZATION LINE SEQUENTIAL
+       FILE STATUS IS deelnemer-status.
+       
+       SELECT nieuwDeelnemersBestand 
+       ASSIGN TO naamNieuwDeelnemersBestand
+       ORGANIZATION LINE SEQUENTIAL.
+       
+       DATA DIVISION.
+       FILE SECTION.
+       FD parameterInvoer.
+       COPY "parameterInvoer.cpy".
+       
+       FD deelnemersBestand.
+       COPY "deelnemersBestand.cpy".
+       
+       FD nieuwDeelnemersBestand.
+       COPY "nieuwDeelnemersBestand.cpy".
+       WORKING-STORAGE SECTION.
+       
+       01 projectRecord.
+           02 projectCode                       PIC 9(5) VALUE SPACES.
+           02 naamDeelnemersBestand             PIC X(50) VALUE SPACES.
+           02 naamNieuwDeelnemersBestand        PIC X(50) VALUE SPACES.
+      * deelnemersLijn in naam steken is niet nodig zei ze,
+      * enkel paswoord hieronder is normaal genoeg dus    
+       01 deelnemer.
+           02 naam                              PIC X(30) VALUE SPACES.
+           02 paswoord                          PIC X(30) VALUE SPACES.
+       01 lengtePaswoord                        PIC 99.
+       01 aantalHoofdletters                    PIC 99.
+       01 aantalCijfers                         PIC 99.
+           
+       01 JdbcString                            PIC X(100) VALUE SPACES.
+       01 Statuscodes.
+           02 parameter-status.
+               05 parameter-status-key1         PIC X.
+               05 parameter-status-key2         PIC X.
+               05 binary-parameter-status 
+               REDEFINES parameter-status-key2  PIC 99.
+           02 deelnemer-status.
+               05 deelnemer-status-key1         PIC X.
+               05 deelnemer-status-key2         PIC X.
+               05 binary-deelnemer-status
+               REDEFINES deelnemer-status-key2  PIC 99.
+           02 inv-key-status.
+               05 inv-key-status-key1         PIC X.
+               05 inv-key-status-key2         PIC X.
+               05 binary-inv-key-status
+               REDEFINES inv-key-status-key2  PIC 99.
+           88 ontbrekende-csv-status            VALUE HIGH-VALUES.
+       01 fileNotFoundMsg                       PIC X(100).
+
+               
+       PROCEDURE DIVISION.
+       
+       pgm.
+           OPEN INPUT parameterInvoer
+           EVALUATE parameter-status-key1
+               WHEN "3" PERFORM 2000-check-perm-err-parameter
+           END-EVALUATE
+           READ parameterInvoer
+               AT END SET eof IN parameterRecord to TRUE
+                      CALL "LogHandler" USING "Parameterfile is leeg."
+                      STOP RUN
+           END-READ
+           MOVE parameterLijn TO JdbcString
+           
+           READ parameterInvoer
+               AT END SET eof IN parameterRecord to TRUE
+           END-READ
+           
+           PERFORM UNTIL eof IN parameterRecord
+           
+      * TODO: Evalueer projectCode(3B) en einddatum(3C)
+      
+               MOVE parameterLijn to projectCode
+               
+               READ parameterInvoer
+                   AT END SET eof IN parameterRecord to TRUE
+               END-READ
+               
+               MOVE parameterLijn to naamDeelnemersBestand
+               
+               OPEN INPUT deelnemersBestand
+               EVALUATE deelnemer-status-key1
+                   WHEN "3" PERFORM 3000-check-perm-err-deelnemer
+                   WHEN OTHER SET ontbrekende-csv-status TO FALSE
+               END-EVALUATE
+               
+               IF NOT ontbrekende-csv-status
+               THEN
+                   PERFORM 1000-Verwerking-usersbestand
+               END-IF
+
+               
+               READ parameterInvoer
+                   AT END SET eof IN parameterRecord to TRUE
+               END-READ             
+
+           END-PERFORM
+           
+       .
+       
+       1000-Verwerking-usersbestand.
+      * TODO Fout weghalen bij de reads
+      * Maar toch juiste output, we omzeilen de fout momenteel
+      * 1e user wordt normaal niet weggeschreven als je code overloopt
+      
+      * TODO deelnemersLijn in variabele naam steken, moest ook niet
+      * Is die omzeiling denk ik, want zonder die lijn geeft hij user 1
+      * niet meer weer
+      
+          READ deelnemersBestand
+              AT END SET eof IN deelnemersRecord TO TRUE
+           END-READ
+           
+           
+           STRING naamDeelnemersBestand DELIMITED BY "."
+                  ".OUT.csv"                DELIMITED BY SIZE
+           INTO naamNieuwDeelnemersBestand
+           OPEN OUTPUT nieuwDeelnemersBestand
+           
+           PERFORM UNTIL eof IN deelnemersRecord
+      *    deelnemersLijn in naam steken moet niet zei ze
+      *    lijn hieronder mag dus normaal weg
+              MOVE deelnemersLijn TO naam
+               READ deelnemersBestand
+                   AT END SET eof IN deelnemersRecord TO TRUE
+               END-READ
+               CALL 'PWGenerator' RETURNING paswoord
+               PERFORM 4000-paswoordEvaluatie
+      *    lijn hieronder dus beter:
+      *    STRING deelnemersLijn DELIMITED BY SPACES     
+               STRING naam DELIMITED BY SPACES
+               ";" DELIMITED BY SIZE
+                paswoord DELIMITED BY SPACES 
+               INTO nieuwDeelnemersLijn
+               WRITE nieuwDeelnemersRecord
+               EVALUATE inv-key-status-key1
+                   WHEN "2" PERFORM 6000-check-inv-key-dataSchrijven
+               END-EVALUATE
+               INITIALIZE nieuwDeelnemersLijn
+           END-PERFORM
+       .
+       .
+       
+       2000-check-perm-err-parameter.
+       EVALUATE parameter-status-key2
+           WHEN "5" CALL "LogHandler" 
+                    USING "Parameterfile niet gevonden."
+                    SET ontbrekende-csv-status TO TRUE
+           WHEN OTHER SET ontbrekende-csv-status TO FALSE
+       END-EVALUATE
+       .
+       
+       3000-check-perm-err-deelnemer.
+       EVALUATE deelnemer-status-key2
+           WHEN "5" 
+           STRING "deelnemerFile " DELIMITED BY SIZE
+                  naamDeelnemersBestand DELIMITED BY SPACES
+                  " niet gevonden." DELIMITED BY SIZE
+                  INTO fileNotFoundMsg
+           CALL "LogHandler" 
+              USING fileNotFoundMsg
+                    STOP RUN
+       END-EVALUATE
+       .
+       
+      * 4A Niet nodig, PWGenerator klopt altijd
+       4000-paswoordEvaluatie.
+
+       .
+       
+      * TODO: 5A Er loopt iets fout bij het opslaan van de data.
+       5000-check-inv-key-dataOpslaan.
+       
+       .
+       
+       6000-check-inv-key-dataSchrijven.
+       EVALUATE inv-key-status-key2
+           WHEN "2" CALL "LogHandler" 
+                    USING "Attempt to write duplicated key"
+           WHEN "3" CALL "LogHandler" 
+                    USING "No record found."
+       END-EVALUATE
+       .
+
+       

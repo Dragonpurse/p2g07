@@ -1,0 +1,22 @@
+using System.Collections.Generic;
+
+namespace p2g7.Models.Domain
+{
+    public partial class Doos
+    {
+        public Doos()
+        {
+            this.TrajectOnderdelen = new List<TrajectOnderdeel>();
+            this.VragenDoos = new List<VraagDoos>();
+        }
+
+        public int DoosID { get; set; }
+        public string Titel { get; set; }
+        public string Omschrijving { get; set; }
+        public string Doelgroep { get; set; }
+        public string Kernwoorden { get; set; }
+        public string Thema { get; set; }
+        public virtual ICollection<TrajectOnderdeel> TrajectOnderdelen { get; set; }
+        public virtual ICollection<VraagDoos> VragenDoos { get; set; }
+    }
+}

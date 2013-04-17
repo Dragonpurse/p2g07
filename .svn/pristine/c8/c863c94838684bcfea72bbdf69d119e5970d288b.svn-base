@@ -1,0 +1,83 @@
+@model IEnumerable<Project2Groep7.Models.Medewerker>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th></th>
+        <th>
+            Email
+        </th>
+        <th>
+            Wachtwoord
+        </th>
+        <th>
+            Voornaam
+        </th>
+        <th>
+            Naam
+        </th>
+        <th>
+            TelefoonNr
+        </th>
+        <th>
+            Organisatie
+        </th>
+        <th>
+            Intern
+        </th>
+        <th>
+            RememberMe
+        </th>
+        <th>
+            tblLeertrajects
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MedewerkerID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.MedewerkerID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MedewerkerID })
+        </td>
+        <td>
+			@item.Email
+        </td>
+        <td>
+			@item.Wachtwoord
+        </td>
+        <td>
+			@item.Voornaam
+        </td>
+        <td>
+			@item.Naam
+        </td>
+        <td>
+			@item.TelefoonNr
+        </td>
+        <td>
+			@item.Organisatie
+        </td>
+        <td>
+			@item.Intern
+        </td>
+        <td>
+			@item.RememberMe
+        </td>
+        <td>
+			@(item.tblLeertrajects == null ? "None" : item.tblLeertrajects.Count.ToString())
+        </td>
+    </tr>
+}
+
+</table>
+
+

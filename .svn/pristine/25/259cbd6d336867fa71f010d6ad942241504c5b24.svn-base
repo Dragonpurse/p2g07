@@ -1,0 +1,25 @@
+package domein;
+
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.table.TableModel;
+
+import domein.tableModel.SoortTableModel;
+
+public abstract class Controller extends Observable implements Observer{
+	
+	private String actorID;
+	
+	public Controller(){
+		setActorID("admin");
+	}
+	
+	public String getActorID() {
+		return actorID;
+	}
+	
+	public void setActorID(String actorID){
+		this.actorID = actorID;
+	}
+}

@@ -1,0 +1,58 @@
+using p2g7.Models.Domain;
+
+namespace p2g7.Models.Mapping
+{
+    public class MedewerkerMap : EntityTypeConfiguration<Medewerker>
+    {
+        public MedewerkerMap()
+        {
+            // Primary Key
+            this.HasKey(t => t.Email);
+
+            // Properties
+            this.Property(t => t.Email)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            this.Property(t => t.Voornaam)
+                .IsRequired()
+                .HasMaxLength(25);
+
+            this.Property(t => t.Naam)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            this.Property(t => t.TelefoonNr)
+                .HasMaxLength(50);
+
+            this.Property(t => t.Organisatie)
+                .HasMaxLength(50);
+
+            this.Property(t => t.Wachtwoord)
+                .IsFixedLength()
+                .HasMaxLength(8);
+
+            // Table & Column Mappings
+            this.ToTable("tblMedewerker");
+            this.Property(t => t.Email).HasColumnName("Email");
+            this.Property(t => t.Voornaam).HasColumnName("Voornaam");
+            this.Property(t => t.Naam).HasColumnName("Naam");
+            this.Property(t => t.TelefoonNr).HasColumnName("TelefoonNr");
+            this.Property(t => t.Organisatie).HasColumnName("Organisatie");
+            this.Property(t => t.Intern).HasColumnName("Intern");
+            this.Property(t => t.Wachtwoord).HasColumnName("Wachtwoord");
+
+            // Relationships
+            this.HasMany(t => t.Leertrajecten)
+                .WithMany(t => t.Medewerkers)
+                .Map(m =>
+                    {
+                        m.ToTable("tblLeertrajectMedewerker");
+                        m.MapLeftKey("Email");
+                        m.MapRightKey("LeertrajectCode");
+                    });
+
+
+        }
+    }
+}

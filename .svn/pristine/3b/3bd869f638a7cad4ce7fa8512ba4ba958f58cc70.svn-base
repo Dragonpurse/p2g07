@@ -1,0 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblVraag
+    {
+        public tblVraag()
+        {
+            this.tblAntwoordCasus = new List<tblAntwoordCasu>();
+            this.tblAntwoordCasus1 = new List<tblAntwoordCasu>();
+            this.tblCasus = new List<Casus>();
+        }
+
+        [Key]
+        public int VraagID { get; set; }
+        public string VraagTekst { get; set; }
+        public virtual ICollection<tblAntwoordCasu> tblAntwoordCasus { get; set; }
+        public virtual ICollection<tblAntwoordCasu> tblAntwoordCasus1 { get; set; }
+        public virtual ICollection<Casus> tblCasus { get; set; }
+    }
+}

@@ -1,0 +1,68 @@
+package domein;
+
+import java.util.List;
+
+public abstract class Onderdeel {
+	private String displayNaam;
+	private String displayOmschrijving;
+	private String titel;
+	private String omschrijving;
+	private List<String> kernwoorden;
+	private String doelgroep;
+	private String type;
+	
+	public Onderdeel(String displayNaam, String displayOmschrijving, String titel, String omschrijving, List<String> kernwoorden, String doelgroep, String type) {
+		setDisplayNaam(displayNaam);
+		setDisplayOmschrijving(displayOmschrijving);
+		setTitel(titel);
+		setOmschrijving(omschrijving);
+		setKernwoorden(kernwoorden);
+		setDoelgroep(doelgroep);
+		setType(type);
+	}
+	
+	public String getDisplayNaam(){
+		return displayNaam;
+	}
+	public String getDisplayOmschrijving(){
+		return displayOmschrijving;
+	}
+	public void setDisplayNaam(String displayNaam) {
+		this.displayNaam = displayNaam;
+	}
+	public void setDisplayOmschrijving(String displayOmschrijving) {
+		this.displayOmschrijving = displayOmschrijving;
+	}
+	public String getTitel() {
+		return titel;
+	}
+	public void setTitel(String titel) {
+		this.titel = titel;
+	}
+	public String getOmschrijving() {
+		return omschrijving;
+	}
+	public void setOmschrijving(String omschrijving) {
+		this.omschrijving = omschrijving;
+	}
+	public List<String> getKernwoorden() {
+		return kernwoorden;
+	}
+	public void setKernwoorden(List<String> kernwoorden) {
+		this.kernwoorden = kernwoorden;
+	}
+	public String getDoelgroep() {
+		return doelgroep;
+	}
+	public void setDoelgroep(String doelgroep) {
+		this.doelgroep = doelgroep;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+}

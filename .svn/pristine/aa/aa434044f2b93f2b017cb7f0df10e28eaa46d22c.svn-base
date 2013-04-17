@@ -1,0 +1,25 @@
+package domein;
+
+import persistentie.LeertrajectMapper;
+
+public class LeertrajectRepository {
+
+	@SuppressWarnings("unused")
+	private LeertrajectMapper leertrajectMapper;
+
+	public int geefAantalLeertrajecten() {
+		throw new UnsupportedOperationException();
+		//SELECT COUNT(*) FROM tblLALALA
+	}
+
+	public Leertraject geefLeertraject(String leertrajectCode) {
+		throw new UnsupportedOperationException();
+		
+		//SELECT * FROM tblLALALA WHERE CODE = code
+		//return new Leertraject(leertrajectCode, titel, omschrijving, startDatum, doelgroep, beschikbaarheidVan, beschikbaarheidTot, externeMedewerker)
+	}
+
+	public void leertrajectenAanmaken() {
+		throw new UnsupportedOperationException();
+	}
+}

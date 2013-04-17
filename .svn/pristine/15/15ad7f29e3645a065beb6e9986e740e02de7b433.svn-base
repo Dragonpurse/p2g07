@@ -1,0 +1,71 @@
+package testen;
+
+import static org.junit.Assert.*;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import javax.swing.text.DateFormatter;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import persistentie.PersistentieController;
+
+import domein.DomeinController;
+import domein.Leertraject;
+
+
+public class UC2Test {
+	
+	
+	
+	
+//	@Parameters
+//	public static Collection<Object[]> data() {
+//        return Arrays.asList(new Object[][] {"blala", "ballala" , "blala"});
+//	}
+	
+	private DomeinController dc;
+	//private PersistentieController pcDummy;
+
+	@Before
+	public void before(){
+		dc = new DomeinController();
+	}
+	
+	@Test
+	public void testAanmakenLeertrajectCorrectParameters() {
+		dc.aanmakenLeertraject("G001", "NUTTELOOS", "DIT\nIS\nNUTTELOOS", new GregorianCalendar(2013, 02, 18), 
+								"TIN", new GregorianCalendar(2003, 02, 18) , new GregorianCalendar(2015, 02, 18), "");
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testAanmakenLeertrajectVerkeerdeParameters() {
+		dc.aanmakenLeertraject("G0001", "ιΰηθω564658φοθίµ", "DIT\nIS\nNUTTELOOS", new GregorianCalendar(2013, 02, 18), 
+								"TIN", new GregorianCalendar(2003, 02, 18) , new GregorianCalendar(2015, 02, 18), "");
+	}
+	
+	
+	@Test
+	public void kopieerLeertraject() {
+		dc.setGeselecteerdLeertraject(new Leertraject("G001", "NUTTELOOS", "DIT\nIS\nNUTTELOOS", new GregorianCalendar(2013, 02, 18), 
+				"TIN", new GregorianCalendar(2003, 02, 18) , new GregorianCalendar(2015, 02, 18), ""));
+		dc.kopieerLeertraject("G002", "NUTTELOOS", "DIT\nIS\nNUTTELOOS", new GregorianCalendar(2013, 02, 18), 
+				"TIN", new GregorianCalendar(2003, 02, 18) , new GregorianCalendar(2015, 02, 18), "");
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void kopieerLeertrajectZelfdeCode() {
+		dc.setGeselecteerdLeertraject(new Leertraject("G001", "NUTTELOOS", "DIT\nIS\nNUTTELOOS", new GregorianCalendar(2013, 02, 18), 
+				"TIN", new GregorianCalendar(2003, 02, 18) , new GregorianCalendar(2015, 02, 18), ""));
+		dc.kopieerLeertraject("G001", "NUTTELOOS", "DIT\nIS\nNUTTELOOS", new GregorianCalendar(2013, 02, 18), 
+				"TIN", new GregorianCalendar(2003, 02, 18) , new GregorianCalendar(2015, 02, 18), "");
+	}
+	
+	
+	
+	
+
+}

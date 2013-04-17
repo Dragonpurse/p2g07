@@ -1,0 +1,83 @@
+package gui;
+
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+
+import net.miginfocom.swing.MigLayout;
+import domein.LeertrajectController;
+import domein.pattern.observer.Observer;
+
+public class BeheerOnderdeelPanel extends JPanel implements Observer {
+
+	private LeertrajectController lc;
+	private DocumentToevoegenPanel docPanel;
+	private CasusToevoegenPanel casusPanel;
+	private StellingspelToevoegenPanel stellPanel;
+	private BestaandOnderdeel onderdelenPanel;
+
+	public BeheerOnderdeelPanel(LeertrajectController lc) {
+		this.lc = lc;
+		lc.addObserver(this);
+		initGUI();
+		createMigLayout();
+	}
+
+	private void createMigLayout() {
+		add(docPanel,"spanx,wrap");
+		add(onderdelenPanel,"spanx,wrap");
+//		add(casusPanel,"spany,wrap");
+		add(stellPanel,"spany,wrap");
+		
+	}
+
+	private void initGUI() {
+		setLayout(new MigLayout("hidemode 3 , nocache","[grow,fill]"));
+		setBackground(new Color(250,250,250));
+		setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+		{
+			docPanel = new DocumentToevoegenPanel(lc);
+			docPanel.setVisible(false);
+		}
+		{
+			onderdelenPanel = new BestaandOnderdeel(lc);
+		}
+//		{
+//			casusPanel = new CasusToevoegenPanel(lc);
+//			casusPanel.setVisible(false);
+//		}
+		{
+			stellPanel = new StellingspelToevoegenPanel(lc);
+			stellPanel.setVisible(false);
+		}
+	}
+
+	@Override
+	public void update(Object object) {
+		if(object.equals("Document")) {
+			docPanel.setVisible(true);
+			onderdelenPanel.setVisible(false);
+//			casusPanel.setVisible(false);
+			stellPanel.setVisible(false);
+		}
+		if(object.equals("Casus")) {
+			docPanel.setVisible(false);
+//			casusPanel.setVisible(true);
+			stellPanel.setVisible(false);
+			onderdelenPanel.setVisible(false);
+		}
+		if(object.equals("Stellingenspel")) {
+			docPanel.setVisible(false);
+//			casusPanel.setVisible(false);
+			stellPanel.setVisible(true);
+			onderdelenPanel.setVisible(false);
+		}
+		if(object.equals("Bestaand")){
+			onderdelenPanel.setVisible(true);
+			docPanel.setVisible(false);
+//			casusPanel.setVisible(false);
+			stellPanel.setVisible(false);
+		}
+	}
+}

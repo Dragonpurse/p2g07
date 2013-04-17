@@ -1,0 +1,50 @@
+@model Project2Groep7.Models.Leertraject
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>tblLeertraject</legend>
+
+    <div class="display-label">Titel</div>
+    <div class="display-field">@Model.Titel</div>
+
+    <div class="display-label">Omschrijving</div>
+    <div class="display-field">@Model.Omschrijving</div>
+
+    <div class="display-label">StartDatum</div>
+    <div class="display-field">@String.Format("{0:g}", Model.StartDatum)</div>
+
+    <div class="display-label">Doelgroep</div>
+    <div class="display-field">@Model.Doelgroep</div>
+
+    <div class="display-label">BeschikbaarheidVan</div>
+    <div class="display-field">@String.Format("{0:g}", Model.BeschikbaarheidVan)</div>
+
+    <div class="display-label">BeschikbaarheidTot</div>
+    <div class="display-field">@String.Format("{0:g}", Model.BeschikbaarheidTot)</div>
+
+    <div class="display-label">Actief</div>
+    <div class="display-field">@Model.Actief</div>
+
+    <div class="display-label">Gearchiveerd</div>
+    <div class="display-field">@Model.Gearchiveerd</div>
+
+    <div class="display-label">tblTrajectOnderdelens</div>
+    <div class="display-field">@(Model.tblTrajectOnderdelens == null ? "None" : Model.tblTrajectOnderdelens.Count.ToString())</div>
+
+    <div class="display-label">tblDeelnemers</div>
+    <div class="display-field">@(Model.tblDeelnemers == null ? "None" : Model.tblDeelnemers.Count.ToString())</div>
+
+    <div class="display-label">tblMedewerkers</div>
+    <div class="display-field">@(Model.tblMedewerkers == null ? "None" : Model.tblMedewerkers.Count.ToString())</div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.LeertrajectCode }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+

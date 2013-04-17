@@ -1,0 +1,7 @@
+package domein;
+
+public enum StellingAntwoordKleur {
+	
+	GEEL, GROEN, ROOD, BLAUW;
+
+}

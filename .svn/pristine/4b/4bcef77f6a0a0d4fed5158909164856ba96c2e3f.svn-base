@@ -1,0 +1,8 @@
+﻿@model Project2Groep7.Models.Doos
+@{
+    ViewBag.Title = "_PartialViewDoos";
+}
+
+<h2>_PartialViewDocument</h2>
+@Model.Titel
+@Model.Omschrijving

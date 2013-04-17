@@ -1,0 +1,51 @@
+﻿@model Project2Groep7.Models.Document
+@{
+    ViewBag.Title = "_PartialViewDocument";
+}
+
+@{
+    
+    
+    string[] supportedDocFormat = new string[] {".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".odt", ".ods", ".pdf", ".pages", ".ai", ".psd", ".tiff", 
+                                   ".dxf", ".svg", ".eps", ".ps", ".ttf", ".otf", ".xps", ".zip", ".rar"};
+    string[] supportedVidFormat = new string[] { ".aaf", ".3gp", ".asf", ".avchd", ".cam", ".flv", ".m1v", ".m2v", ".m4v", ".mkv", ".mov", ".mpg", 
+                                    ".mpeg", ".mpe", ".mp4", ".ogg", ".rm", ".svi", ".swf", ".wmv" };
+                                   
+    string url = "http://docs.google.com/gview?url=" + Model.Locatie + "&embedded=true";
+    string filename = System.IO.Path.GetFileName(Model.Locatie);
+    string videoUrl = string.Format("{0}://{1}:{2}{3}", @Request.Url.Scheme, @Request.Url.Host, @Request.Url.Port, "/Resources/" + filename);
+    string extension = System.IO.Path.GetExtension(Model.Locatie);
+}
+
+<h2>_PartialViewDocument</h2>
+@Model.Titel
+@Model.Omschrijving
+
+    @*Google Docs*@
+    @if (supportedDocFormat.Contains(extension))
+    {
+        <p>
+            <iframe src="@url" style="width:600px; height:500px;" frameborder="0"></iframe>
+        </p>
+    }
+
+    @*Youtube*@
+    @if(Model.Locatie.Contains("youtu")){
+        <p>
+            <iframe width="560" height="315" src="@Model.getYoutubeVideoUrl(Model.Locatie)" frameborder="0" allowfullscreen></iframe>
+            @*<iframe width="560" height="315" src="@Model.Locatie" frameborder="0" allowfullscreen></iframe>*@
+        </p>
+    }
+
+    @if (supportedVidFormat.Contains(extension))
+    {
+        <p>
+           <video id="sampleMovie" src="@videoUrl" controls></video>
+
+            @*http://localhost:4750/Resources/startrek.mov*@
+        </p>
+    }
+ 
+
+
+    

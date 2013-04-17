@@ -1,0 +1,58 @@
+import java.util.ArrayList;
+import java.util.List;
+
+import gui.MainFrame;
+import javax.swing.JFrame;
+
+import org.joda.time.LocalDate;
+
+import domein.Leertraject;
+import domein.LeertrajectController;
+import domein.Medewerker;
+
+public class StartUp {
+
+	public static void main(String[] args) {
+		JFrame mainFrame = new MainFrame(new LeertrajectController());
+		mainFrame.setVisible(true);
+	}
+	
+	
+	
+	
+	
+	
+//	TESTVOORBEELD
+//	LeertrajectController c = new LeertrajectController();
+//	Leertraject lt = c.maakLeertrajectAan();
+//	lt.setTitel("Test");
+//	lt.setOmschrijving("Dit is een test");
+//	lt.setDoelgroep("developer");
+//	lt.setLeertrajectCode("A016");
+//	lt.setStartdatum(LocalDate.now().plusDays(3));
+//	lt.setBeschikbaarheidVan(LocalDate.now().plusDays(2));
+//	lt.setBeschikbaarheidTot(LocalDate.now().plusDays(5));
+//	List<Medewerker> lm = new ArrayList<>();
+//	lm.add(new Medewerker("admin",true));
+//	lm.add(new Medewerker("guest",false));
+//	lt.setMedewerkerLijst(lm);
+//	
+//	c.save(lt);
+//	}
+//	
+//	c.setGeselecteerdLeertraject(c.getManager().geefLeertraject(0));
+//	c.setGeselecteerdOnderdeel(c.getManager().geefOnderdeel(2));
+//	c.linkOnderdeel(c.getGeselecteerdOnderdeel());
+	
+//	Document d = (Document) c.maakOnderdeelaan("Document");
+//	d.setDoelgroep("developer");
+//	d.setTitel("uitvoer.docx");
+//	d.setOmschrijving("bevat de uitvoer van de koe");
+//	d.setType("Document");
+//	d.setLocatie("c:\\users\\bjorn\\desktop\\uitvoer.docx");
+//	d.setKernwoorden(new ArrayList<String>());
+//	
+//	c.save(d);
+//	c.linkOnderdeel(d);
+//	}
+}

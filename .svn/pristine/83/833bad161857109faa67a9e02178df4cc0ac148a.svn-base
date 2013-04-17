@@ -1,0 +1,14 @@
+package gui;
+
+
+import javax.swing.JPanel;
+
+import domein.LeertrajectController;
+
+public class BeheerTrajectPanel extends JPanel{
+
+	public BeheerTrajectPanel(LeertrajectController lc) {
+		// TODO Auto-generated constructor stub
+	}
+
+}

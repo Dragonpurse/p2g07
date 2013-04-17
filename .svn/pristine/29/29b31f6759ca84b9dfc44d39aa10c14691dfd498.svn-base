@@ -1,0 +1,42 @@
+import gui.MainFrame;
+
+import javax.swing.JFrame;
+import java.util.*;
+
+import javax.swing.JOptionPane;
+
+import org.joda.time.LocalDate;
+import domein.Document;
+import domein.Leertraject;
+import domein.LeertrajectController;
+import domein.LeertrajectRepository;
+import domein.Onderdeel;
+
+
+public class StartUp {
+
+	public static void main(String[] args) {
+		
+		/*
+		LeertrajectController c = new LeertrajectController("G001");
+		LeertrajectRepository lr = c.getLeertrajectRepository();
+		
+		try{
+		c.setGeselecteerdLeertraject(lr.geefLeertraject(0));
+		c.kopieerLeertraject("T002", "Kopie TestTraject", "Dit is geen banaan", LocalDate.now(), "Wij", LocalDate.now().plusDays(3), LocalDate.now().plusDays(5), "Jelle");
+		Onderdeel od = new Document("TestDoc2", "Dit is een testdocument", new ArrayList<String>(), "Wij", "C:\\MijnDocumenten\\Banaan\\TestDoc2.docx", c.getGeselecteerdLeertraject().getBeschikbaarheidVan(), c.getGeselecteerdLeertraject().getBeschikbaarheidTot());
+		c.voegOnderdeelToe(od);
+		}catch(Exception e){
+			JOptionPane.showMessageDialog(null, e.getMessage());
+
+		}
+		catch(Exception e){
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		*/
+		JFrame mainFrame = new MainFrame(new LeertrajectController("G001"));
+		mainFrame.setVisible(true);
+		
+
+	}
+}

@@ -1,0 +1,80 @@
+package testen;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.GregorianCalendar;
+
+import junit.framework.Assert;
+
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+
+import domein.Document;
+import domein.DomeinController;
+import domein.Leertraject;
+import domein.Onderdeel;
+
+public class UC3Test {
+	
+	private GregorianCalendar today = DateTime.now().toGregorianCalendar();
+	private GregorianCalendar threeDaysFromNow = DateTime.now().plusDays(3).toGregorianCalendar();
+	private GregorianCalendar oneYearFromNow = DateTime.now().plusYears(1).toGregorianCalendar();
+	private ArrayList<String> tags = new ArrayList<String>(Arrays.asList("lol", "wut", "test"));
+	private Onderdeel doc1 = new Document("TestDoc1", "Dit is een test document", tags, "2TIN", "C:/Users/Test/document1.docx");
+	private Onderdeel doc2 = new Document("TestDoc2", "Dit is een tweede test document", tags, "3TIN", "C:/Users/Test/document2.docx");
+	private DomeinController dc;
+	
+	@Before
+	public void before(){
+		dc = new DomeinController();
+		dc.aanmakenLeertraject("G001", "Titel", "DIT\nIS\nEEN\nOMSCHR", threeDaysFromNow, 
+				"TIN", today, oneYearFromNow, "");
+	}
+	
+	@Test
+	public void testAddOnderdeel(){
+		dc.addOnderdeel(doc1);
+		Assert.assertEquals(dc.getLijstOnderdelen().get(0), doc1);
+		dc.addOnderdeel(doc2);
+		Assert.assertEquals(dc.getLijstOnderdelen().get(1), doc2);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testAddOnderdeelDieErNietZijn(){
+		Onderdeel doc3 = null;
+		Onderdeel doc4 = null;
+		dc.addOnderdeel(doc3);
+		dc.addOnderdeel(doc4);
+	}
+	
+	@Test
+	public void testVerwijderOnderdeel(){
+		dc.addOnderdeel(doc1);
+		dc.addOnderdeel(doc2);
+		dc.verwijderOnderdeel(doc1);
+		Assert.assertEquals(doc2, dc.getLijstOnderdelen().get(0));
+		dc.verwijderOnderdeel(doc2);
+		Assert.assertTrue(dc.getLijstOnderdelen().isEmpty());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testVerwijderOnderdeelDieErNietZijn(){
+		dc.verwijderOnderdeel(doc1);
+		dc.verwijderOnderdeel(doc2);
+	}
+	
+	@Test
+	public void testGetLijstOnderdelen(){
+		testAddOnderdeel();
+		ArrayList<Onderdeel> lijst = dc.getLijstOnderdelen();
+		Assert.assertEquals(2, lijst.size());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testGetLegeLijstOnderdelen(){
+		dc.getLijstOnderdelen();
+	}
+	
+
+}

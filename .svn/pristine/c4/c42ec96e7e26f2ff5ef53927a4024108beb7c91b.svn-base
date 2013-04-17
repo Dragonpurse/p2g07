@@ -1,0 +1,25 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Project2Groep7.Models
+{
+    public partial class tblDoo
+    {
+        public tblDoo()
+        {
+            this.tblTrajectOnderdelens = new List<TrajectOnderdelen>();
+            this.tblVraagDoos = new List<tblVraagDoo>();
+        }
+
+        [Key]
+        public int DoosID { get; set; }
+        public string Titel { get; set; }
+        public string Omschrijving { get; set; }
+        public string Doelgroep { get; set; }
+        public string Kernwoorden { get; set; }
+        public string Thema { get; set; }
+        public virtual ICollection<TrajectOnderdelen> tblTrajectOnderdelens { get; set; }
+        public virtual ICollection<tblVraagDoo> tblVraagDoos { get; set; }
+    }
+}

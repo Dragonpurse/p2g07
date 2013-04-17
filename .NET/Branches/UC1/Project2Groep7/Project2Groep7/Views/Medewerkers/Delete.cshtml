@@ -1,0 +1,47 @@
+@model Project2Groep7.Models.Medewerker
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>Medewerker</legend>
+
+    <div class="display-label">Email</div>
+    <div class="display-field">@Model.Email</div>
+
+    <div class="display-label">Wachtwoord</div>
+    <div class="display-field">@Model.Wachtwoord</div>
+
+    <div class="display-label">Voornaam</div>
+    <div class="display-field">@Model.Voornaam</div>
+
+    <div class="display-label">Naam</div>
+    <div class="display-field">@Model.Naam</div>
+
+    <div class="display-label">TelefoonNr</div>
+    <div class="display-field">@Model.TelefoonNr</div>
+
+    <div class="display-label">Organisatie</div>
+    <div class="display-field">@Model.Organisatie</div>
+
+    <div class="display-label">Intern</div>
+    <div class="display-field">@Model.Intern</div>
+
+    <div class="display-label">RememberMe</div>
+    <div class="display-field">@Model.RememberMe</div>
+
+    <div class="display-label">tblLeertrajects</div>
+    <div class="display-field">@(Model.tblLeertrajects == null ? "None" : Model.tblLeertrajects.Count.ToString())</div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}
+
+

@@ -1,0 +1,25 @@
+package domein;
+
+import java.util.Date;
+import java.util.*;
+
+public class Leertraject {
+
+	private String code;
+	private String titel;
+	private String omschrijving;
+	private Date startdatum;
+	private String doelgroep;
+	private Date beschikbaarheidVan;
+	private Date beschikbaarheidTot;
+	private String medewerkerExtern;
+	private Collection<Document> documenten;
+	public void voegDocumentToe(Document document) {
+		throw new UnsupportedOperationException();
+	}
+	public Leertraject(String code, String titel, String omschrijving,
+			Date startDatum, String doelgroep, String beschikbaarheidVan,
+			String beschikbaarheidTot, String medewerkerExtern) {
+		throw new UnsupportedOperationException();
+	}
+}

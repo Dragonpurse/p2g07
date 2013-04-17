@@ -1,0 +1,50 @@
+@model IEnumerable<Project2Groep7.Models.Leertraject>
+@*@model IPagination<Project2Groep7.Models.Leertraject>*@
+@using MvcContrib.UI.Grid;
+@using MvcContrib.Pagination;
+@using MvcContrib.UI.Pager;
+@using MvcContrib.Sorting;
+
+@{
+    ViewBag.Title = "Lijst van leertrajecten";
+    //int[] aantalTonen = { 5, 10, 20, 50 };
+    //decimal pages = ViewBag.Pages;
+    //int currentPage = ViewBag.CurrentPage;
+    //int listLength = ViewBag.listLength;
+}
+
+        <h1>Index</h1>
+
+
+@if (Model.Count() == 0)
+{
+    <h2>Er zijn geen leertrajecten aan u toegewezen</h2>
+}
+else
+{
+
+
+    <div class="content-1">
+        <h2>User List</h2>  
+
+        @Html.Grid(Model).Sort(ViewBag.SortModel as GridSortOptions).Columns(column =>
+        {
+        
+            column.For(p => p.Titel).Named("Title");
+            column.For(p => p.Omschrijving).Named("Omschrijving");
+            column.For(p => p.StartDatum).Named("Start Datum");
+            column.For(p => p.Doelgroep).Named("Doelgroep");
+            column.For(p => p.BeschikbaarheidVan).Named("Van");
+            column.For(p => p.BeschikbaarheidTot).Named("Tot");
+            column.For(p => @Html.ActionLink("Bekijk", "ViewLeertraject", new { leertrajectCode = p.LeertrajectCode }));
+        }
+        ).Attributes( @class=>"Grid",@width =>"100%", @border =>"1", @style =>"text-align:center;border-collapse:collapse")
+
+
+        @Html.Pager((IPagination)Model).First("First").Next(">>").Previous("<<").Last("Last").Format("Total: {2}, Current {0} - {1} ")
+    </div>
+    
+    
+    
+
+}
